@@ -1,0 +1,28 @@
+{
+  "name": "statistics-visualization",
+  "version": "1.0.1",
+  "description": "Statistic visualization",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "supervisor -i node_modules,.git,app,public -e html,js server"
+  },
+  "author": "Antti Manninen <antti.mann@gmail.com>",
+  "dependencies": {
+    "bluebird": "^3.3.4",
+    "good": "^6.6.0",
+    "good-console": "^5.3.1",
+    "hapi": "^13.2.2",
+    "inert": "^3.2.0",
+    "jade": "^1.11.0",
+    "lodash": "^4.6.1",
+    "request": "^2.69.0",
+    "vision": "^4.0.1"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^5.0.0",
+    "grunt-contrib-uglify": "^0.4.1",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}
