@@ -28,15 +28,14 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
 .controller('StatisticsController', function($routeParams, StatisticsAPI, StatisticsAPIData) {
     var ctrl = this;
 
+    ctrl.sources = createSources();
     ctrl.inputs = [];
-    generateInputs(0);
-    ctrl.table = createTableInput();
+    ctrl.table = null;
     ctrl.series = createSeriesData();
 
-    function generateInputs(inputNumber) {
+    function createSources() {
         let sources = {
             title: "Lähde",
-            inputNumber: inputNumber,
             options: [], 
             chosen: null,
             get: get,
@@ -45,23 +44,25 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
 
         sources.get();
         
-        function get(newValue) {
+        function get() {
             StatisticsAPI.query({}, (values) => {
                 sources.options = values;
                 _.map(sources.options, (e) => {
                     e.id = e.dbid;
                 });
                 sources.chosen = sources.options[0].id;
-                ctrl.inputs = [sources];
-                let nextInput = createSubjectInput(inputNumber + 1, sources.chosen);
+                ctrl.inputs = [];
+                let nextInput = createSubjectInput(0, sources.chosen);
                 sources.triggerNext = nextInput.get;
             });
         }
+         
+        return sources;
     }
     
     function createSubjectInput(inputNumber, newValue) {
         let subjects = {
-            title: 'Aihe' + inputNumber,
+            title: 'Aihe' + (inputNumber + 1),
             inputNumber: inputNumber,
             options: [],
             chosen: null,
@@ -71,30 +72,33 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
 
         subjects.get(newValue);
         return subjects;
- 
+       
         function get(newValue) {
-            let previousInputs = ctrl.inputs.slice(0, inputNumber - 1);
-            StatisticsAPIData(_.map(previousInputs, 'chosen').concat(newValue))
+            ctrl.inputs = ctrl.inputs.length ? ctrl.inputs.slice(0, inputNumber) : [];
+            ctrl.table = null;
+            let chosenValues = _.map(ctrl.inputs, 'chosen');
+            let pathSoFar = [ctrl.sources.chosen].concat(chosenValues);
+            pathSoFar = pathSoFar.slice(0, pathSoFar.length - 1).concat([newValue]);
+            StatisticsAPIData(pathSoFar)
                 .query({}, (values) => {
                     subjects.options = values;
                     subjects.chosen = subjects.options[0].id;
-                    ctrl.inputs = ctrl.inputs.slice(0, inputNumber).concat(subjects);
-                    
+                    ctrl.inputs.push(subjects);
+                       
                     if (subjects.options[0].id.endsWith('.px')) {
-                        let nextInput = createTableInput(inputNumber + 1, subjects.chosen);
-                        subjects.triggerNext = nextInput.change;
+                        let nextInput = createTableInput(subjects.chosen);
+                        subjects.triggerNext = nextInput.get;
                     }
                     else {
                         let nextInput = createSubjectInput(inputNumber + 1, subjects.chosen);
-                        subjects.triggerNext = nextInput.change;
+                        subjects.triggerNext = nextInput.get;
                     }
                 });
         }
-    }
-
-    function createTableInput(inputNumber, newValue) {
+    } 
+ 
+    function createTableInput(newValue) {
         let table = {
-            inputNumber: inputNumber,
             variables: [],
             get: get
         };
@@ -103,9 +107,10 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
         table.get(newValue);
         return table; 
         
-        function get(newValue) {
-            let previousInputs = ctrl.inputs.slice(0, inputNumber - 1);
-            StatisticsAPIData(_.map(previousInputs, 'chosen').concat(newValue))
+        function get(newValue) { 
+            let previousInputs = ctrl.inputs.slice(0, ctrl.inputs.length - 1);
+            let chosenValues = _.map(previousInputs, 'chosen');
+            StatisticsAPIData([ctrl.sources.chosen].concat(chosenValues, newValue))
                 .get({}, (values) => {
                     let inputs = _.map(values.variables, (entry) => {
                         let value = {
@@ -116,7 +121,7 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
                                     text: text
                                 };
                             }),
-                            time: entry.time || ["vuosi", "tilastovuosi"].indexOf(entry.code.toLowerCase()) >= 0
+                            time: entry.time || isYearData(entry)
                         };
 
                         value.chosen = value.options[0].id;
@@ -125,22 +130,22 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
                     table.variables = inputs;
                 });
         }
-        
-        return table;
     }
-
+ 
     function createSeriesData() {
         let series = { 
             data: [],
             get: function() {
+                let chosenValues = _.map(ctrl.inputs, 'chosen');
+                
                 let query = createDataQueryValues(ctrl.table.variables);
-                StatisticsAPIData(_.map(previousInputs, 'chosen'))
+                StatisticsAPIData([ctrl.sources.chosen].concat(chosenValues))
                     .save({
                         query: query,
                         response: { format: 'json' }
                     }, (values) => { 
                         let entry = {};
-                        entry.title = createSeriesName([ctrl.realms].concat(ctrl.table.variables));
+                        entry.title = createSeriesName([ctrl.inputs[ctrl.inputs.length - 1]].concat(ctrl.table.variables));
                         let years = createLabels(values);
                         let reverse = years.length > 1 && parseInt(years[0]) > parseInt(years[1]);
                         entry.labels = reverse ? years.reverse() : years;
@@ -169,7 +174,7 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
 
         function createLabels(values) {
             let yearIndex = _.findIndex(values.columns, (e) => {
-                return ["vuosi", "tilastovuosi"].indexOf(e.code.toLowerCase()) >= 0;
+                return isYearData(e);
             });
             
             if (yearIndex === -1) {
@@ -213,6 +218,10 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
 
             return query;
         }
+    }
+
+    function isYearData(entry) {
+        return ['vuosi', 'tilastovuosi', 'time'].indexOf(entry.code.toLowerCase()) >= 0;
     }
 
 });

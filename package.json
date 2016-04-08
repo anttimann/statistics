@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "start": "supervisor -i node_modules,.git,app -e html,js server",
-    "watch": "watchify app/app.js -o public/app.js -d -v"
+    "watch": "watchify app/app.js -o public/app.js -d -v",
+    "build-css": "node-sass --include-path app app/app.scss public/main.css",
+    "watch-css": "nodemon -e scss -x \"npm run build-css\""
   },
   "author": "Antti Manninen <antti.mann@gmail.com>",
   "dependencies": {
@@ -23,6 +25,8 @@
   },
   "devDependencies": {
     "chart.js": "^1.1.1",
-    "moment": "^2.12.0"
+    "moment": "^2.12.0",
+    "node-sass": "^3.4.2",
+    "nodemon": "^1.9.1"
   }
 }

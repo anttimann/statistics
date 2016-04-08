@@ -1,0 +1,70 @@
+$background-color1: hsl(199, 60%, 27%);
+$background-border1: 1px solid hsla(199,59%,21%,1);
+
+.top-row {
+  height: 70px;
+  color: white;
+  background-color: $background-color1;
+  border-bottom: $background-border1;
+  padding: 10px 20px;
+  font-size: 40px;
+}
+
+.inputs {
+  height: 100%;
+  background-color: hsl(194, 75%, 35%);
+  border-right: 1px solid hsla(194,75%,27%,1);
+  color: white;
+  padding: 15px;
+  margin-left: -15px;
+  
+  table td {
+    color: white;
+    padding-bottom: 15px;
+  }
+  
+  .inputs_area {
+    overflow: auto;
+    margin-bottom: 50px;
+
+    .inputs_input {
+      margin-bottom: 10px;
+
+      button {
+        float: right;
+        font-size: 17px;
+        background: hsl(141, 75%, 35%);
+      }
+    }
+    
+    .title {
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+  }
+}
+
+.chart_area {
+  padding: 15px;
+  
+  .no_series_text {
+    text-align: center;
+    padding-top: 10%;
+    font-size: 50px;
+    font-weight: 900;
+    color: rgba(0, 0, 0, 0.36);
+  }
+
+  sv-line-chart {
+    display: block;
+  }
+}
+
+.footer {
+  min-height: 100px;
+  padding: 20px 10px;
+  background-color: $background-color1;
+  border-top: $background-border1;
+  color: white;
+}
