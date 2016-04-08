@@ -1,16 +1,16 @@
 angular.module('DatalistInput', [])
 
-.directive('ghvDatalistInput', function() {
+.directive('svDatalistInput', function() {
     return {
         restrict: 'E',
         transclude: true,
         scope: {
             title: '@',
-            name: '@',
+            name: '@', 
             model: '=',
             options: '='
         },
-        templateUrl: 'directives/datalist'
+        templateUrl: 'app/inputs/datalist'
     }
-});
+}); 
  

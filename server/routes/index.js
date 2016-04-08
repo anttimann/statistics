@@ -4,7 +4,7 @@ module.exports = [
         path: '/',
         config: {
             handler: (request, reply) => {
-                reply.view('index', {
+                reply.view('templates/index', {
                     g_page_name: process.env.npm_package_name,
                     g_page_description: process.env.npm_package_description
                 })
@@ -25,7 +25,16 @@ module.exports = [
         path: '/partials/{partial*}',
         config: {
             handler: (request, reply) => {
-                reply.view(request.params.partial)
+                reply.view('app/' + request.params.partial)
+            }
+        }
+    }
+    , {
+        method: 'GET',
+        path: '/app/{path*}',
+        config: {
+            handler: (request, reply) => {
+                reply.view('app/' + request.params.path)
             }
         }
     }

@@ -1,0 +1,9 @@
+div
+    table.table.table-striped.table-bordered(cellspacing="0")
+        thead
+            tr
+                th(ng-repeat="title in titles")
+                    a(ng-click="sort.type=title.id; sort.reverse=!sort.reverse") {{title.title}}
+        tbody
+            tr(ng-repeat="entry in data | orderBy:sort.type:sort.reverse | filter:filter ")
+                td(ng-repeat="title in titles") {{entry[title.id]}}

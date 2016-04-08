@@ -9,7 +9,7 @@ angular.module('Datatable', [])
             filter: '=',
             titles: '='
         },
-        templateUrl: 'partials/datatable',
+        templateUrl: 'app/displays/datatable',
         link: function (scope) {
             scope.sort = {
                 type: 'commits',

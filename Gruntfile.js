@@ -3,7 +3,8 @@ module.exports = function(grunt) {
         watch: {
             clientjs: {
                 files: [
-                    'app/*.js'
+                    'app/*.js',
+                    'app/**/*.js'
                 ],
                 tasks: ['browserify', 'uglify'],
                 options: {
@@ -13,11 +14,14 @@ module.exports = function(grunt) {
         },
         browserify: {
             dist: {
+                options: {
+                    transform: [
+                        ["babelify"]
+                    ],
+                    exclude: ['jquery']
+                },
                 files: {
                     'public/app.js': ['app/app.js']
-                },
-                options: {
-                    exclude: ['jquery']
                 }
             }
         },

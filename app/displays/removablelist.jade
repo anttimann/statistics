@@ -1,0 +1,5 @@
+table
+    tr(ng-repeat="entry in series")
+        td {{entry.title}}
+        td 
+            button.btn.btn-danger(ng-click="remove(entry.title)") X

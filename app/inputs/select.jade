@@ -1,0 +1,4 @@
+div
+    label(for="{{id}}_select") {{title}}
+    select.form-control(id="{{id}}_select", ng-model="model", ng-change="change(model)")
+        option(ng-repeat="option in options track by $index", value="{{option.id}}")  {{option.text}}

@@ -1,0 +1,5 @@
+div.form-group
+    label(for="{{name}}_dir") {{title}}
+    input.form-control(id="{{name}}_dir", type="text", list="{{name}}_dir_list", ng-model="model")
+    datalist.form-control(id="{{name}}_dir_list", style="display:none;")
+        option(ng-repeat="option in options track by $index", data-value="{{option.text}}", value="{{option.id}}") 

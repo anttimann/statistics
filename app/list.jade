@@ -1,0 +1,19 @@
+div.container-fluid
+    div.row
+        div.col-xs-12.col-md-4
+            div.well
+                div(ng-repeat="input in statistics.inputs")
+                    sv-select-input(title="{{input.title}}", options="input.options", name="{{input.title}}", model="input.chosen", change="input.triggerNext")
+
+                div(ng-repeat="variable in statistics.table.variables")
+                    div(ng-if="!variable.time")
+                        sv-select-input(title="{{variable.title}}", options="variable.options", name="{{variable.title}}")
+                div
+                    button.btn.btn-success(ng-click="statistics.series.get()") Lisää sarja kuvaan
+                    
+            div.well
+                sv-removable-list(series="statistics.series.data", remove="statistics.series.remove")
+            
+        div.col-xs-12.col-md-8
+                sv-line-chart(series="statistics.series.data", style="display: block;")
+   
