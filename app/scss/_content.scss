@@ -1,0 +1,61 @@
+.inputs {
+  background-color: hsl(194, 75%, 35%);
+  border-right: 1px solid hsla(194,75%,27%,1);
+  color: white;
+  padding: 15px;
+  margin-left: -15px;
+  
+  @include respond-to(max-medium-screens) {
+    margin-right: -15px;
+  }
+
+  @include respond-to(wide-screens) {
+    height: 100%;
+  }
+  
+  table td {
+    color: white;
+    padding-bottom: 15px;
+  }
+
+  .inputs_area {
+    overflow: auto;
+    &:nth-child(2) {
+      margin-top: 50px;
+    }
+
+    .inputs_input {
+      margin-bottom: 10px;
+
+      button {
+        float: right;
+        font-size: 17px;
+        background: hsl(141, 75%, 35%);
+      }
+    }
+
+    .title {
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+  }
+}
+
+.chart_area {
+  padding: 30px 15px 15px;
+
+  .no_series_text {
+    text-align: center;
+    padding-top: 10%;
+    padding-bottom: 10%;
+    font-size: 50px;
+    font-weight: 900;
+    color: rgba(0, 0, 0, 0.36);
+  }
+
+  sv-line-chart {
+    display: block;
+    min-height: 500px;
+  }
+}

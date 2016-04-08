@@ -1,24 +1,37 @@
 .top-row {
-  height: 70px;
   color: white;
   background-color: #1c546e;
   border-bottom: 1px solid #164155;
   padding: 10px 20px;
-  font-size: 40px; }
+  font-size: 40px;
+  font-family: 'Montserrat', sans-serif; }
+
+.footer {
+  min-height: 100px;
+  padding: 20px 10px;
+  background-color: #1c546e;
+  border-top: 1px solid #164155;
+  color: white; }
 
 .inputs {
-  height: 100%;
   background-color: #167d9c;
   border-right: 1px solid #116078;
   color: white;
   padding: 15px;
   margin-left: -15px; }
+  @media only screen and (max-width: 1199px) {
+    .inputs {
+      margin-right: -15px; } }
+  @media only screen and (min-width: 1200px) {
+    .inputs {
+      height: 100%; } }
   .inputs table td {
     color: white;
     padding-bottom: 15px; }
   .inputs .inputs_area {
-    overflow: auto;
-    margin-bottom: 50px; }
+    overflow: auto; }
+    .inputs .inputs_area:nth-child(2) {
+      margin-top: 50px; }
     .inputs .inputs_area .inputs_input {
       margin-bottom: 10px; }
       .inputs .inputs_area .inputs_input button {
@@ -31,19 +44,14 @@
       margin-bottom: 10px; }
 
 .chart_area {
-  padding: 15px; }
+  padding: 30px 15px 15px; }
   .chart_area .no_series_text {
     text-align: center;
     padding-top: 10%;
+    padding-bottom: 10%;
     font-size: 50px;
     font-weight: 900;
     color: rgba(0, 0, 0, 0.36); }
   .chart_area sv-line-chart {
-    display: block; }
-
-.footer {
-  min-height: 100px;
-  padding: 20px 10px;
-  background-color: #1c546e;
-  border-top: 1px solid #164155;
-  color: white; }
+    display: block;
+    min-height: 500px; }

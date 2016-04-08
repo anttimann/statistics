@@ -3,7 +3,15 @@ require('../vendor/chart.js-2.0.0-beta2');
 
 const _ = require('lodash');
 
-angular.module('LineChart', ['chart.js']) 
+angular.module('LineChart', ['chart.js'])
+    
+.config(['ChartJsProvider', function (ChartJsProvider) {
+    // Configure all charts
+    ChartJsProvider.setOptions({
+        maintainAspectRatio: false,
+        responsive: true 
+    });
+}]) 
     
 .directive('svLineChart', function() { 
     return {
