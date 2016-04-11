@@ -8,7 +8,8 @@
     "start": "supervisor -i node_modules,.git,app -e html,js server",
     "watch": "watchify app/app.js -o public/app.js -d -v",
     "build-css": "node-sass --include-path app app/app.scss public/main.css",
-    "watch-css": "nodemon -e scss -x \"npm run build-css\""
+    "watch-css": "nodemon -e scss -x \"npm run build-css\"",
+    "unittest": "jasmine JASMINE_CONFIG_PATH=jasmine.json"
   },
   "author": "Antti Manninen <antti.mann@gmail.com>",
   "dependencies": {
@@ -24,9 +25,25 @@
     "vision": "^4.0.1"
   },
   "devDependencies": {
+    "angular-mocks": "^1.5.3",
+    "brfs": "^1.4.3",
+    "browserify": "^13.0.0",
+    "chai": "^3.5.0",
     "chart.js": "^1.1.1",
+    "font-awesome": "^4.5.0",
+    "jasmine": "^2.4.1",
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.22",
+    "karma-browserify": "^5.0.3",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.2.3",
+    "karma-mocha": "^0.2.2",
+    "karma-ng-html2js-preprocessor": "^0.2.2",
+    "karma-ng-jade2js-preprocessor": "^0.2.1",
     "moment": "^2.12.0",
     "node-sass": "^3.4.2",
-    "nodemon": "^1.9.1"
+    "nodemon": "^1.9.1",
+    "requirejs": "^2.2.0",
+    "watchify": "^3.7.0"
   }
 }

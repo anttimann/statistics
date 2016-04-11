@@ -5,6 +5,21 @@
   padding: 10px 20px;
   font-size: 40px;
   font-family: 'Montserrat', sans-serif;
+  overflow: auto;
+
+  .page_name {
+    float: left;
+  }
+  
+  .menu {
+    .menu_open {
+      @extend .fa;
+      @extend .fa-align-justify;
+      float: right;
+      line-height: 56px;
+      cursor: hand;
+    }
+  }
 }
 
 .footer {

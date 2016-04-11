@@ -12,7 +12,7 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
     $httpProvider.defaults.headers.common = {};
     $httpProvider.defaults.headers.post = {};
     $httpProvider.defaults.headers.put = {};
-    $httpProvider.defaults.headers.patch = {};
+    $httpProvider.defaults.headers.patch = {}; 
 }]) 
 
 .factory('StatisticsAPI', function($resource) {
@@ -21,139 +21,110 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
 
 .factory('StatisticsAPIData', function($resource) {
     return function(path) {
-        return $resource('http://pxnet2.stat.fi/PXWeb/api/v1/fi/' + path.join('/'));
+        return $resource('http://pxnet2.stat.fi/PXWeb/api/v1/fi/' + path);
     };
 })
     
 .controller('StatisticsController', function($routeParams, StatisticsAPI, StatisticsAPIData) {
     var ctrl = this;
 
-    ctrl.sources = createSources();
-    ctrl.inputs = [];
-    ctrl.table = null;
+    ctrl.dataTree = getSources();
+    ctrl.chosenPath = '';
+    
+    ctrl.tables = [];
     ctrl.series = createSeriesData();
 
-    function createSources() {
-        let sources = {
-            title: "Lähde",
-            options: [], 
-            chosen: null,
-            get: get,
-            triggerNext: null
-        };
-
-        sources.get();
-        
-        function get() {
-            StatisticsAPI.query({}, (values) => {
-                sources.options = values;
-                _.map(sources.options, (e) => {
-                    e.id = e.dbid;
-                });
-                sources.chosen = sources.options[0].id;
-                ctrl.inputs = [];
-                let nextInput = createSubjectInput(0, sources.chosen);
-                sources.triggerNext = nextInput.get;
+    function getSources() {  
+        return StatisticsAPI.query().$promise.then((values) => {
+            ctrl.dataTree = _.map(values, (e) => {
+                var value = {
+                    path: e.dbid,
+                    id: e.dbid,
+                    text: e.text,
+                    children: []
+                }; 
+               
+                value.getNext = () => { 
+                    ctrl.chosenPath = (value.path && (value.path === ctrl.chosenPath)) ? '' : value.path;
+                    addSubjects(value, value.id);
+                };  
+                return value;  
             });
-        }
-         
-        return sources;
+        });
     }
-    
-    function createSubjectInput(inputNumber, newValue) {
-        let subjects = {
-            title: 'Aihe' + (inputNumber + 1),
-            inputNumber: inputNumber,
-            options: [],
-            chosen: null,
-            get: get,
-            triggerNext: null
-        };
 
-        subjects.get(newValue);
-        return subjects;
-       
-        function get(newValue) {
-            ctrl.inputs = ctrl.inputs.length ? ctrl.inputs.slice(0, inputNumber) : [];
-            ctrl.table = null;
-            let chosenValues = _.map(ctrl.inputs, 'chosen');
-            let pathSoFar = [ctrl.sources.chosen].concat(chosenValues);
-            pathSoFar = pathSoFar.slice(0, pathSoFar.length - 1).concat([newValue]);
-            StatisticsAPIData(pathSoFar)
-                .query({}, (values) => {
-                    subjects.options = values;
-                    subjects.chosen = subjects.options[0].id;
-                    ctrl.inputs.push(subjects);
-                       
-                    if (subjects.options[0].id.endsWith('.px')) {
-                        let nextInput = createTableInput(subjects.chosen);
-                        subjects.triggerNext = nextInput.get;
-                    }
-                    else {
-                        let nextInput = createSubjectInput(inputNumber + 1, subjects.chosen);
-                        subjects.triggerNext = nextInput.get;
-                    }
-                });
+    function addSubjects(parent, subjectPath) {
+        if (parent.children.length) {
+            return;
         }
-    } 
- 
-    function createTableInput(newValue) {
-        let table = {
-            variables: [],
-            get: get
-        };
           
-        ctrl.table = table;
-        table.get(newValue);
-        return table; 
-        
-        function get(newValue) { 
-            let previousInputs = ctrl.inputs.slice(0, ctrl.inputs.length - 1);
-            let chosenValues = _.map(previousInputs, 'chosen');
-            StatisticsAPIData([ctrl.sources.chosen].concat(chosenValues, newValue))
-                .get({}, (values) => {
-                    let inputs = _.map(values.variables, (entry) => {
-                        let value = {
-                            title: entry.text,
-                            options: _.zipWith(entry.values, entry.valueTexts, (id, text) => {
-                                return {
-                                    id: id,
-                                    text: text
-                                };
-                            }),
-                            time: entry.time || isYearData(entry)
-                        };
-
-                        value.chosen = value.options[0].id;
-                        return value;
-                    });
-                    table.variables = inputs;
+        StatisticsAPIData(subjectPath)
+            .query({}, (values) => {
+                parent.children = _.map(values, (e) => {
+                    let value = {
+                        path: subjectPath + '/' + e.id,
+                        id: e.id,
+                        text: e.text, 
+                        children: [],
+                        leaf: e.id.endsWith('.px') ? true: false
+                    };
+   
+                    value.getNext = () => { 
+                        ctrl.chosenPath = value.path;
+                        let adder = e.id.endsWith('.px') ? addTable: addSubjects;
+                        adder(value, value.path); 
+                    };
+                    
+                    return value;
                 });
-        }
+            });
+    }
+ 
+    function addTable(parent, subjectPath) {
+        StatisticsAPIData(subjectPath)
+            .get({}, (values) => {
+                ctrl.tables = _.map(values.variables, (e) => {
+                    let value = {
+                        title: e.text,
+                        options: _.zipWith(e.values, e.valueTexts, (id, text) => {
+                            return {
+                                id: id,
+                                text: text 
+                            };
+                        }),
+                        time: e.time || isYearData(e)  
+                    };
+ 
+                    value.chosen = value.options[0].id;
+                    return value; 
+                });
+
+                ctrl.showValues = true;
+            });
     }
  
     function createSeriesData() {
         let series = { 
             data: [],
             get: function() {
-                let chosenValues = _.map(ctrl.inputs, 'chosen');
-                
-                let query = createDataQueryValues(ctrl.table.variables);
-                StatisticsAPIData([ctrl.sources.chosen].concat(chosenValues))
+                let query = createDataQueryValues(ctrl.tables);
+                StatisticsAPIData(ctrl.chosenPath)
                     .save({
                         query: query,
-                        response: { format: 'json' }
+                        response: { format: 'json' } 
                     }, (values) => { 
                         let entry = {};
-                        entry.title = createSeriesName([ctrl.inputs[ctrl.inputs.length - 1]].concat(ctrl.table.variables));
+                        entry.title = createSeriesName([findLastData(ctrl.dataTree, ctrl.chosenPath.split('/'))].concat(ctrl.tables));
                         let years = createLabels(values);
                         let reverse = years.length > 1 && parseInt(years[0]) > parseInt(years[1]);
                         entry.labels = reverse ? years.reverse() : years;
                         let data = createData(values, reverse);
                         entry.data = reverse ? data.reverse() : data;
                         ctrl.series.data.push(entry);
+   
+                        ctrl.showValues = false;
                     });
-            }, 
+            },  
             remove: function(title) {
                 ctrl.series.data = _.filter(ctrl.series.data, (e) => {
                     return e.title !== title;
@@ -163,11 +134,27 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
         
         return series;
  
+        function findLastData(dataTree, relativePath) {
+            let path = relativePath[0];
+            let value = _.find(dataTree, {id: path});
+
+            if (!value) return {};
+             
+            if (relativePath.length <= 1) {
+                return value;
+            } 
+            
+            return findLastData(value.children, relativePath.slice(1, relativePath.length + 1));  
+        }
+        
         function createSeriesName(types) {
             types = _.filter(types, (t) => {
                 return !t.time;
             });
             return _.map(types, (type) => { 
+                if (type.children) { 
+                    return type.text; 
+                }   
                 return _.find(type.options, {id: type.chosen}).text;
             }).join(' : '); 
         }
@@ -199,7 +186,9 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
                         code: variable.title,
                         selection: {
                             filter: 'item',
-                            values: _.map(variable.options, 'id')
+                            values: _.filter(_.map(variable.options, 'id'), (e) => {
+                                return !isNaN(e) 
+                            })
                         }
                     }
                 }

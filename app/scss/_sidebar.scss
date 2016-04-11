@@ -1,0 +1,58 @@
+.sidebar {
+  @include respond-to(wide-screens) {
+    min-height: 100%;
+  }
+
+  @include respond-to(max-medium-screens) {
+    width: 100%;
+  }
+  
+  background-color: hsl(194, 75%, 35%);
+  border-right: 1px solid hsla(194,75%,27%,1);
+  color: white;
+  float: left;
+  
+  .inputs {
+    padding: 40px 15px 15px;
+    width: 400px;
+    float: left;
+
+    .inputs_area {
+      overflow: auto;
+
+      .inputs_input {
+        margin-bottom: 10px;
+
+        button {
+          float: right;
+          font-size: 17px;
+          
+          .add_series {
+            background: hsl(141, 75%, 35%);
+          }
+          
+          &.hide_view {
+            float: left;
+          }
+        }
+      }
+      
+      .datatree {
+        .entry {
+          cursor: hand;
+          padding-bottom: 10px;
+          
+          .leaf {
+            @extend .fa;
+            @extend .fa-caret-right;
+            margin-left: 5px;
+          }
+        }
+        
+        .active {
+          font-weight: bolder;
+        }
+      }
+    }
+  }
+}

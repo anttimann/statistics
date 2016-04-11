@@ -1,50 +1,11 @@
-.inputs {
-  background-color: hsl(194, 75%, 35%);
-  border-right: 1px solid hsla(194,75%,27%,1);
-  color: white;
-  padding: 15px;
-  margin-left: -15px;
-  
-  @include respond-to(max-medium-screens) {
-    margin-right: -15px;
-  }
-
-  @include respond-to(wide-screens) {
-    height: 100%;
-  }
-  
-  table td {
-    color: white;
-    padding-bottom: 15px;
-  }
-
-  .inputs_area {
-    overflow: auto;
-    &:nth-child(2) {
-      margin-top: 50px;
-    }
-
-    .inputs_input {
-      margin-bottom: 10px;
-
-      button {
-        float: right;
-        font-size: 17px;
-        background: hsl(141, 75%, 35%);
-      }
-    }
-
-    .title {
-      font-weight: 700;
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-  }
-}
-
 .chart_area {
   padding: 30px 15px 15px;
+  margin-bottom: 20px;
 
+  @include respond-to(wide-screens) {
+    margin-left: 400px;
+  }
+  
   .no_series_text {
     text-align: center;
     padding-top: 10%;
@@ -58,4 +19,20 @@
     display: block;
     min-height: 500px;
   }
+}
+
+.remove_series {
+  table td {
+    padding-bottom: 15px;
+    
+    button {
+      margin-left: 10px;
+    }
+  }
+}
+
+.title {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 10px;
 }
