@@ -1,4 +1,4 @@
-angular.module('SelectInput', [])
+angular.module('app.selectinput', [])
 
 .directive('svSelectInput', function() {
     return {

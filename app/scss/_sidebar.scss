@@ -1,21 +1,68 @@
+$input_area_width: $sidebar-width - 30px;
+
 .sidebar {
-  @include respond-to(wide-screens) {
-    min-height: 100%;
-  }
+  overflow-y: auto;
+  color: white;
+  float: left;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+
 
   @include respond-to(max-medium-screens) {
     width: 100%;
+    
+    &.menu_open {
+      height: 100%;
+      display: block;
+    }
+  }
+   
+  @include respond-to(wide-screens) {
+    height: 100%;
+    width: $sidebar-width;
+    background-color: hsl(194, 75%, 35%);
+    border-right: 1px solid hsla(194,75%,27%,1);
+    
+    &.table_visible {
+      width: $input_area_width * 2 + 30px;
+    }
+    
+    .top-row {
+      display: block;
+    }
+  }
+
+  .top-row {
+    z-index: 10;
   }
   
-  background-color: hsl(194, 75%, 35%);
-  border-right: 1px solid hsla(194,75%,27%,1);
-  color: white;
-  float: left;
+  .bottom_area {
+    z-index: 10;
+    background-color: hsl(194, 75%, 35%);
+    border-right: 1px solid hsla(194,75%,27%,1);
+    overflow: auto;
+    
+    @include respond-to(max-medium-screens) {
+      display: none;
+      &.menu_open {
+        display: block;
+      }
+    }
+    
+  }
   
   .inputs {
     padding: 40px 15px 15px;
-    width: 400px;
+    max-width: $input_area_width;
     float: left;
+
+    @include respond-to(max-medium-screens) {
+      &.table_visible {
+        display: none;
+      }
+    }
 
     .inputs_area {
       overflow: auto;
@@ -51,6 +98,12 @@
         
         .active {
           font-weight: bolder;
+        }
+
+        @include respond-to(max-tablets-screens) {
+          ul {
+            -webkit-padding-start: 8px;
+          }
         }
       }
     }

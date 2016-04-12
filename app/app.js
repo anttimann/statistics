@@ -1,11 +1,11 @@
 require('./statistics');
 
-angular.module('statistics', ['ngRoute', 'StatisticsVisualization'])
+angular.module('app.statistics', ['ngRoute', 'app.pxdata'])
  
 .config(function($routeProvider) {
-    $routeProvider
+    $routeProvider 
         .when('/', { 
-            controller: 'StatisticsController as statistics',
-            templateUrl: 'partials/list' 
+            controller: 'StatisticsController as stats',
+            templateUrl: 'partials/list'  
         })   
 });   

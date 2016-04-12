@@ -215,6 +215,7 @@
 
 .fa-remove:before,
 .fa-close:before,
+.top-row .menu .menu_open.menu_close:before,
 .fa-times:before {
   content: ""; }
 
@@ -2085,7 +2086,11 @@
   padding: 10px 20px;
   font-size: 40px;
   font-family: 'Montserrat', sans-serif;
-  overflow: auto; }
+  overflow: auto;
+  height: 80px; }
+  @media only screen and (min-width: 1200px) {
+    .top-row {
+      display: none; } }
   .top-row .page_name {
     float: left; }
   .top-row .menu .menu_open {
@@ -2095,17 +2100,24 @@
 
 .footer {
   min-height: 100px;
-  padding: 20px 10px;
+  padding: 50px 10px;
   background-color: #1c546e;
   border-top: 1px solid #164155;
-  color: white; }
+  color: white;
+  text-align: center; }
+  @media only screen and (min-width: 1200px) {
+    .footer {
+      margin-left: 430px; } }
 
 .chart_area {
   padding: 30px 15px 15px;
-  margin-bottom: 20px; }
+  height: 100%; }
+  @media only screen and (max-width: 1199px) {
+    .chart_area {
+      margin-top: 80px; } }
   @media only screen and (min-width: 1200px) {
     .chart_area {
-      margin-left: 400px; } }
+      margin-left: 430px; } }
   .chart_area .no_series_text {
     text-align: center;
     padding-top: 10%;
@@ -2115,10 +2127,18 @@
     color: rgba(0, 0, 0, 0.36); }
   .chart_area sv-line-chart {
     display: block;
-    min-height: 500px; }
+    height: auto;
+    min-height: 500px;
+    max-height: 800px;
+    margin-bottom: 20px; }
+
+body, html {
+  height: 100%; }
 
 .remove_series table td {
   padding-bottom: 15px; }
+  .remove_series table td i {
+    margin-right: 10px; }
   .remove_series table td button {
     margin-left: 10px; }
 
@@ -2128,20 +2148,48 @@
   margin-bottom: 10px; }
 
 .sidebar {
-  background-color: #167d9c;
-  border-right: 1px solid #116078;
+  overflow-y: auto;
   color: white;
-  float: left; }
-  @media only screen and (min-width: 1200px) {
-    .sidebar {
-      min-height: 100%; } }
+  float: left;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10; }
   @media only screen and (max-width: 1199px) {
     .sidebar {
-      width: 100%; } }
+      width: 100%; }
+      .sidebar.menu_open {
+        height: 100%;
+        display: block; } }
+  @media only screen and (min-width: 1200px) {
+    .sidebar {
+      height: 100%;
+      width: 430px;
+      background-color: #167d9c;
+      border-right: 1px solid #116078; }
+      .sidebar.table_visible {
+        width: 830px; }
+      .sidebar .top-row {
+        display: block; } }
+  .sidebar .top-row {
+    z-index: 10; }
+  .sidebar .bottom_area {
+    z-index: 10;
+    background-color: #167d9c;
+    border-right: 1px solid #116078;
+    overflow: auto; }
+    @media only screen and (max-width: 1199px) {
+      .sidebar .bottom_area {
+        display: none; }
+        .sidebar .bottom_area.menu_open {
+          display: block; } }
   .sidebar .inputs {
     padding: 40px 15px 15px;
-    width: 400px;
+    max-width: 400px;
     float: left; }
+    @media only screen and (max-width: 1199px) {
+      .sidebar .inputs.table_visible {
+        display: none; } }
     .sidebar .inputs .inputs_area {
       overflow: auto; }
       .sidebar .inputs .inputs_area .inputs_input {

@@ -1,5 +1,7 @@
 table
-    tr(ng-repeat="entry in series")
-        td {{entry.title}}
+    tr(ng-repeat="entry in series track by $index")
+        td 
+            i.fa.fa-circle(style="color: {{colors[$index]}}") 
+            | {{entry.title}}
         td 
             button.btn.btn-danger(ng-click="remove(entry.title)") X

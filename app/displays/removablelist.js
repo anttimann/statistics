@@ -1,4 +1,6 @@
-angular.module('RemovableList', [])
+const common = require('./common');
+
+angular.module('app.removablelist', [])
 
 .directive('svRemovableList', function() {
     return {
@@ -8,7 +10,10 @@ angular.module('RemovableList', [])
             series: '=',
             remove: '='
         },
-        templateUrl: 'app/displays/removablelist'
+        templateUrl: 'app/displays/removablelist',
+        link: (scope) => {
+            scope.colors = common.colors;
+        }
     }
 });
  

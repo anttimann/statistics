@@ -1,4 +1,4 @@
-angular.module('DatalistInput', [])
+angular.module('app.datalistinput', [])
 
 .directive('svDatalistInput', function() {
     return {

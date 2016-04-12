@@ -1,16 +1,16 @@
 require('./displays/linechart');
-require('./displays/removablelist')
-require('./inputs/datalist');
+require('./displays/removablelist'); 
+require('./displays/datatree');
 require('./inputs/select');
 
 const _ = require('lodash');
-
-angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'SelectInput', 'LineChart', 'RemovableList'])
+  
+angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 'app.removablelist', 'app.datatree'])
  
 .config(['$httpProvider', function ($httpProvider) {
-    //Reset headers to avoid OPTIONS request (aka preflight)
+    //Reset headers to avoid OPTIONS request (aka preflight) 
     $httpProvider.defaults.headers.common = {};
-    $httpProvider.defaults.headers.post = {};
+    $httpProvider.defaults.headers.post = {}; 
     $httpProvider.defaults.headers.put = {};
     $httpProvider.defaults.headers.patch = {}; 
 }]) 
@@ -29,10 +29,12 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
     var ctrl = this;
 
     ctrl.dataTree = getSources();
-    ctrl.chosenPath = '';
-    
-    ctrl.tables = [];
-    ctrl.series = createSeriesData();
+    ctrl.tables = {};
+    ctrl.series = getSeriesData();
+    ctrl.show = {
+        menuOpen: false,
+        tables: false
+    };
 
     function getSources() {  
         return StatisticsAPI.query().$promise.then((values) => {
@@ -40,37 +42,37 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
                 var value = {
                     path: e.dbid,
                     id: e.dbid,
-                    text: e.text,
-                    children: []
+                    text: e.text.replace(/_/g, ' ').replace('StatFin', 'Tilastokeskus'),
+                    children: []  
                 }; 
                
-                value.getNext = () => { 
-                    ctrl.chosenPath = (value.path && (value.path === ctrl.chosenPath)) ? '' : value.path;
+                value.getNext = () => {
+                    ctrl.show.tables = false;
                     addSubjects(value, value.id);
                 };  
                 return value;  
             });
-        });
+        }); 
     }
 
     function addSubjects(parent, subjectPath) {
         if (parent.children.length) {
             return;
-        }
+        }  
           
         StatisticsAPIData(subjectPath)
             .query({}, (values) => {
                 parent.children = _.map(values, (e) => {
                     let value = {
                         path: subjectPath + '/' + e.id,
-                        id: e.id,
-                        text: e.text, 
+                        id: e.id, 
+                        text: e.text,
                         children: [],
                         leaf: e.id.endsWith('.px') ? true: false
                     };
    
-                    value.getNext = () => { 
-                        ctrl.chosenPath = value.path;
+                    value.getNext = () => {
+                        ctrl.show.tables = false;
                         let adder = e.id.endsWith('.px') ? addTable: addSubjects;
                         adder(value, value.path); 
                     };
@@ -79,12 +81,15 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
                 });
             });
     }
- 
+    
+    
     function addTable(parent, subjectPath) {
+        ctrl.show.tables = true;
         StatisticsAPIData(subjectPath)
             .get({}, (values) => {
-                ctrl.tables = _.map(values.variables, (e) => {
-                    let value = {
+                ctrl.tables.title = parent.text;
+                ctrl.tables.options = _.map(values.variables, (e) => {
+                    let value = { 
                         title: e.text,
                         options: _.zipWith(e.values, e.valueTexts, (id, text) => {
                             return {
@@ -92,38 +97,36 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
                                 text: text 
                             };
                         }),
-                        time: e.time || isYearData(e)  
+                        time: e.time || isYearData(e)   
                     };
- 
+                    
                     value.chosen = value.options[0].id;
                     return value; 
                 });
 
-                ctrl.showValues = true;
+                ctrl.tables.getSeriesData = () => {
+                    ctrl.series.get(ctrl.tables.options, parent, subjectPath);
+                }
             });
     }
  
-    function createSeriesData() {
+    function getSeriesData() {
         let series = { 
-            data: [],
-            get: function() {
-                let query = createDataQueryValues(ctrl.tables);
-                StatisticsAPIData(ctrl.chosenPath)
+            data: [],    
+            get: function(tableValues, parentSubject, subjectPath) {
+                let query = createDataQueryValues(tableValues);
+                StatisticsAPIData(subjectPath)
                     .save({
                         query: query,
                         response: { format: 'json' } 
                     }, (values) => { 
-                        let entry = {};
-                        entry.title = createSeriesName([findLastData(ctrl.dataTree, ctrl.chosenPath.split('/'))].concat(ctrl.tables));
-                        let years = createLabels(values);
-                        let reverse = years.length > 1 && parseInt(years[0]) > parseInt(years[1]);
-                        entry.labels = reverse ? years.reverse() : years;
-                        let data = createData(values, reverse);
-                        entry.data = reverse ? data.reverse() : data;
+                        let entry = createSeries(values);
+                        entry.title = createSeriesName([parentSubject].concat(tableValues));
+                        
                         ctrl.series.data.push(entry);
-   
-                        ctrl.showValues = false;
-                    });
+                        ctrl.show.tables = false;
+                        ctrl.show.menuOpen = false;
+                    }); 
             },  
             remove: function(title) {
                 ctrl.series.data = _.filter(ctrl.series.data, (e) => {
@@ -134,18 +137,31 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
         
         return series;
  
-        function findLastData(dataTree, relativePath) {
-            let path = relativePath[0];
-            let value = _.find(dataTree, {id: path});
+        function createSeries(values) {
+            let entry = {};
+            let years = createLabels(values);
 
-            if (!value) return {};
-             
-            if (relativePath.length <= 1) {
-                return value;
-            } 
+            let reverse = years.length > 1 && parseInt(years[0]) > parseInt(years[1]);
+            entry.labels = reverse ? years.reverse() : years;
+
+            let data = createData(values, reverse);
+            entry.data = reverse ? data.reverse() : data;
             
-            return findLastData(value.children, relativePath.slice(1, relativePath.length + 1));  
+            return entry;
         }
+        
+        //function findLastData(dataTree, relativePath) {
+        //    let path = relativePath[0];
+        //    let value = _.find(dataTree, {id: path});
+        //
+        //    if (!value) return {};
+        //     
+        //    if (relativePath.length <= 1) {
+        //        return value;
+        //    } 
+        //    
+        //    return findLastData(value.children, relativePath.slice(1, relativePath.length + 1));  
+        //}
         
         function createSeriesName(types) {
             types = _.filter(types, (t) => {
@@ -187,7 +203,7 @@ angular.module('StatisticsVisualization', ['ngResource', 'DatalistInput', 'Selec
                         selection: {
                             filter: 'item',
                             values: _.filter(_.map(variable.options, 'id'), (e) => {
-                                return !isNaN(e) 
+                                return !isNaN(e) || e === 'Arvo' 
                             })
                         }
                     }

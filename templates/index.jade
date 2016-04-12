@@ -1,4 +1,4 @@
-html(lang="en", ng-app="statistics")
+html(lang="en", ng-app="app.statistics")
     head
         title= g_page_name
         meta(name="description", content=g_page_description)
@@ -22,9 +22,12 @@ html(lang="en", ng-app="statistics")
         div.footer
             div.container-fluid
                 div.row
-                    div.col-xs-12.col-md-6.col-lg-4
+                    div.col-xs-12
+                        div.title
+                            | Sivusta
                         div
-                            | Sivu käyttää Tilastokeskuksen ja muiden avointa API:a.
+                            | Sivu käyttää Tilastokeskuksen ja muiden avointa 
+                            a(href="http://pxnet2.stat.fi/api1.html") API:a.
                             | Sivun tarkoitus on helpottaa tiedon löytämistä ja hahmottamista.
                         div    
                             | Sivu on avointa lähdekoodia ja se löytyy GitHubista.

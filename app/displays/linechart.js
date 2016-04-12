@@ -4,14 +4,21 @@ require('angular-chart.js');
 require('../../vendor/chart.js-2.0.0-beta2');
 
 const converter = require('./linechartconverter');
+const common = require('./common');
 
-angular.module('LineChart', ['chart.js'])
+angular.module('app.linechart', ['chart.js'])
     
 .config(['ChartJsProvider', function (ChartJsProvider) {
     // Configure all charts
     ChartJsProvider.setOptions({
-        maintainAspectRatio: false,
-        responsive: true 
+        chartColors: common.colors, 
+        maintainAspectRatio: false, 
+        responsive: true,
+        legendTemplate: "<span></span>" 
+    });
+ 
+    ChartJsProvider.setOptions('line', {
+        legendTemplate: "<span></span>"
     });
 }])
     

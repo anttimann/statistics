@@ -1,4 +1,4 @@
-angular.module('Datatable', [])
+angular.module('app.datatable', [])
 
 .directive('ghvDatatable', function() {
     return {

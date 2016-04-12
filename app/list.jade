@@ -1,44 +1,37 @@
-div.container-fluid
-    div.row
-        div.sidebar
-            div.top-row
-                div.page_name
-                    | Käppyrät
-                div.menu
-                    span.sr-only Toggle navigation
-                    span.menu_open
-                
-            div.inputs                    
-                script(type="text/ng-template", id="dataTree")
-                    div.entry(ng-click="entry.getNext()", ng-class="{active: statistics.chosenPath.startsWith(entry.path)}") {{entry.text}}
-                        span.leaf(ng-if="entry.leaf")
-                    ul(ng-if="statistics.chosenPath.startsWith(entry.path) && !entry.leaf")
-                        li(ng-repeat="entry in entry.children", ng-include="'dataTree'")
-                                
+div
+    div.sidebar(ng-class="{table_visible: stats.show.tables, menu_open: stats.show.menuOpen}")
+        div.top-row
+            div.page_name
+                | Käppyrät
+            div.menu.hidden-lg
+                span.sr-only Toggle navigation
+                span.menu_open(ng-click="stats.show.menuOpen =! stats.show.menuOpen", ng-class="{menu_close: stats.show.menuOpen}")   
+
+        div.bottom_area(ng-class="{menu_open: stats.show.menuOpen}")
+            div.inputs(ng-class="{table_visible: stats.show.tables}")
                 div.inputs_area
                     div.title Valitse sarja
-                    div.datatree 
-                        ul
-                            li(ng-repeat="entry in statistics.dataTree", ng-include="'dataTree'")
+                    sv-data-tree(tree-data="stats.dataTree")
 
-            div.inputs(ng-if="statistics.showValues")
-                div.inputs_area
-                    div.inputs_input(ng-repeat="entry in statistics.tables")
+            div.inputs(ng-if="stats.show.tables")
+                div.inputs_area(ng-if="stats.tables.options.length")
+                    div.title {{stats.tables.title}}
+                    div.inputs_input(ng-repeat="entry in stats.tables.options")
                         div(ng-if="!entry.time")
                             sv-select-input(title="{{entry.title}}", options="entry.options", name="{{entry.title}}", model="entry.chosen")
                     div.inputs_input
-                        button.btn.btn-default.hide_view(ng-click="statistics.showValues = false") Piilota
+                        button.btn.btn-default.hide_view(ng-click="stats.show.tables = false") Piilota
                     div.inputs_input
-                        button.btn.btn-success.add_series(ng-click="statistics.series.get()") Lisää sarja kuvaan
-            
-        div.chart_area
-            div(ng-if="statistics.series.data.length")
-                sv-line-chart(series="statistics.series.data")
-            div(ng-if="!statistics.series.data.length")
-                div.no_series_text
-                    | Lisää sarja valikosta
-                    
-            div.remove_series(ng-if="statistics.series.data.length")
-                div.title Poista kuvassa olevia sarjoja
-                sv-removable-list(series="statistics.series.data", remove="statistics.series.remove")        
+                        button.btn.btn-success.add_series(ng-click="stats.tables.getSeriesData()") Lisää sarja kuvaan
+
+    div.chart_area
+        div(ng-if="stats.series.data.length")
+            sv-line-chart(series="stats.series.data")
+        div(ng-if="!stats.series.data.length")
+            div.no_series_text
+                | Lisää sarja valikosta
+                
+        div.remove_series(ng-if="stats.series.data.length")
+            div.title Kuvassa olevat sarjat
+            sv-removable-list(series="stats.series.data", remove="stats.series.remove")        
                     
