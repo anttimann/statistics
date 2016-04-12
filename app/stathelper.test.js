@@ -25,9 +25,10 @@ describe('stathelper  test', function() {
         expect(helper.createSeries({ 
             columns: [{code: 'Vuosi', text: 'Vuosi'}, {code: 'type1', text: 'type1'}],
             data: [{key: ['1990', 'typeValue'], values: ['123']}, {key: ['1991', 'typeValue'], values: ['456']}]
-        })).to.deep.equal({
+        }, 'test')).to.deep.equal({
             data: ['123', '456'],
-            labels: ['1990',  '1991']
+            labels: ['1990',  '1991'],
+            title: 'test'
         });
     });
 });

@@ -1,20 +1,24 @@
+require('angular-local-storage');
+
 require('./displays/linechart');
 require('./displays/removablelist'); 
 require('./displays/datatree');
 require('./inputs/select');
 
 const _ = require('lodash');
-  
+
 const helper = require('./stathelper');
 
-angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 'app.removablelist', 'app.datatree'])
+angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 'app.removablelist', 'app.datatree', 'LocalStorageModule'])
  
-.config(['$httpProvider', function ($httpProvider) {
+.config(['$httpProvider', 'localStorageServiceProvider', function ($httpProvider, localStorageServiceProvider) {
     //Reset headers to avoid OPTIONS request (aka preflight) 
     $httpProvider.defaults.headers.common = {};
     $httpProvider.defaults.headers.post = {}; 
     $httpProvider.defaults.headers.put = {};
-    $httpProvider.defaults.headers.patch = {}; 
+    $httpProvider.defaults.headers.patch = {};
+ 
+    localStorageServiceProvider.setPrefix('sv');
 }]) 
 
 .factory('StatisticsAPI', function($resource) {
@@ -27,7 +31,7 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
     };
 })
     
-.controller('StatisticsController', function($routeParams, $location, StatisticsAPI, StatisticsAPIData) {
+.controller('StatisticsController', function($routeParams, $location, localStorageService, StatisticsAPI, StatisticsAPIData) {
     var ctrl = this;
 
     ctrl.dataTree = getSources();
@@ -37,7 +41,14 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
         menuOpen: false,
         tables: false
     };
-     
+
+    let seriesData = getStoredData();
+    if (seriesData.length && !ctrl.series.data.length) {
+        seriesData.reverse().forEach((d) => {
+            ctrl.series.getData(d.path, d.query, d.title);
+        }); 
+    }
+    
     function getSources() {  
         return StatisticsAPI.query().$promise.then((values) => {
             ctrl.dataTree = _.map(values, (e) => {
@@ -118,14 +129,21 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
         let series = {
             data: [],
             get: function (tableValues, parentSubject, subjectPath) {
+                let title = helper.createSeriesName([parentSubject].concat(tableValues));
                 let query = helper.createDataQueryValues(tableValues);
-                return StatisticsAPIData(subjectPath)
+                
+                let seriesData = getStoredData(); 
+                localStorageService.set('seriesData', seriesData.concat([{title: title, query: query, path: subjectPath}]));
+                return series.getData(subjectPath, query, title);
+
+            },
+            getData: function(path, query, title) {
+                return StatisticsAPIData(path)
                     .save({
                         query: query,
                         response: {format: 'json'}
                     }, (values) => {
-                        let entry = helper.createSeries(values);
-                        entry.title = helper.createSeriesName([parentSubject].concat(tableValues));
+                        let entry = helper.createSeries(values, title);
 
                         ctrl.series.data.push(entry);
                         ctrl.show.tables = false;
@@ -133,6 +151,11 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
                     });
             },
             remove: function (title) {
+                let seriesData = getStoredData();
+                localStorageService.set('seriesData', _.filter(seriesData, (e) => {
+                    return e.title !== title;
+                }));
+                
                 ctrl.series.data = _.filter(ctrl.series.data, (e) => {
                     return e.title !== title;
                 });
@@ -140,5 +163,13 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
         };
 
         return series;
+    }
+    
+    function getStoredData() {
+        let seriesData = localStorageService.get('seriesData');
+        if (!seriesData || !Array.isArray(seriesData)) {
+            return [];
+        }
+        return seriesData;
     }
 });

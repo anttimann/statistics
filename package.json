@@ -25,6 +25,7 @@
     "vision": "^4.0.1"
   },
   "devDependencies": {
+    "angular-local-storage": "^0.2.7",
     "angular-mocks": "^1.5.3",
     "brfs": "^1.4.3",
     "browserify": "^13.0.0",

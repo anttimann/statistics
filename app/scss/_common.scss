@@ -10,8 +10,8 @@ body, html {
   border-top: $background-border1;
   color: white;
   text-align: center;
-  margin-top: -175px;
-  height: 175px;
+  margin-top: -1 * $footer_height;
+  height: $footer_height;
   position: relative;
 
   @include respond-to(wide-screens) {

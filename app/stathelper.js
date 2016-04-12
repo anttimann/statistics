@@ -14,8 +14,8 @@ function createSeriesName(types) {
     }).join(' : ');
 }
 
-function createSeries(values) {
-    let entry = {};
+function createSeries(values, title) { 
+    let entry = {}; 
     let years = createLabels(values);
 
     let reverse = years.length > 1 && parseInt(years[0]) > parseInt(years[1]);
@@ -23,6 +23,8 @@ function createSeries(values) {
 
     let data = createData(values, reverse);
     entry.data = reverse ? data.reverse() : data;
+
+    entry.title = title;
 
     return entry;
 }
