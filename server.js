@@ -14,7 +14,7 @@ const plugins = [
                     events: { log: '*', response: '*' }
                 }
             ]
-        }
+        } 
     },
     { register: require('./index') }
 ];
