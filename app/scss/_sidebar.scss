@@ -28,16 +28,42 @@ $input_area_width: $sidebar-width - 30px;
     &.table_visible {
       width: $input_area_width * 2 + 30px;
     }
-    
-    .top-row {
+  }
+
+  .top_row {
+    color: white;
+    background-color: $background-color1;
+    border-bottom: $background-border1;
+    padding: 10px 20px;
+    font-size: 40px;
+    font-family: 'Montserrat', sans-serif;
+    overflow: auto;
+    height: $toprow-height;
+    z-index: 10;
+
+    @include respond-to(wide-screens) {
       display: block;
+    }
+
+    .page_name {
+      float: left;
+    }
+
+    .menu {
+      .menu_open {
+        @extend .fa;
+        @extend .fa-align-justify;
+        float: right;
+        line-height: 56px;
+        cursor: hand;
+
+        &.menu_close {
+          @extend .fa-close;
+        }
+      }
     }
   }
 
-  .top-row {
-    z-index: 10;
-  }
-  
   .bottom_area {
     z-index: 10;
     background-color: hsl(194, 75%, 35%);

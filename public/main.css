@@ -12,7 +12,7 @@
   font-weight: normal;
   font-style: normal; }
 
-.fa, .top-row .menu .menu_open, .sidebar .inputs .inputs_area .datatree .entry .leaf {
+.fa, .sidebar .top_row .menu .menu_open, .sidebar .inputs .inputs_area .datatree .entry .leaf {
   display: inline-block;
   font: normal normal normal 14px / 1 FontAwesome;
   font-size: inherit;
@@ -69,10 +69,10 @@
 .fa-pull-right {
   float: right; }
 
-.fa.fa-pull-left, .top-row .menu .fa-pull-left.menu_open, .sidebar .inputs .inputs_area .datatree .entry .fa-pull-left.leaf {
+.fa.fa-pull-left, .sidebar .top_row .menu .fa-pull-left.menu_open, .sidebar .inputs .inputs_area .datatree .entry .fa-pull-left.leaf {
   margin-right: .3em; }
 
-.fa.fa-pull-right, .top-row .menu .fa-pull-right.menu_open, .sidebar .inputs .inputs_area .datatree .entry .fa-pull-right.leaf {
+.fa.fa-pull-right, .sidebar .top_row .menu .fa-pull-right.menu_open, .sidebar .inputs .inputs_area .datatree .entry .fa-pull-right.leaf {
   margin-left: .3em; }
 
 /* Deprecated as of 4.4.0 */
@@ -82,10 +82,10 @@
 .pull-left {
   float: left; }
 
-.fa.pull-left, .top-row .menu .pull-left.menu_open, .sidebar .inputs .inputs_area .datatree .entry .pull-left.leaf {
+.fa.pull-left, .sidebar .top_row .menu .pull-left.menu_open, .sidebar .inputs .inputs_area .datatree .entry .pull-left.leaf {
   margin-right: .3em; }
 
-.fa.pull-right, .top-row .menu .pull-right.menu_open, .sidebar .inputs .inputs_area .datatree .entry .pull-right.leaf {
+.fa.pull-right, .sidebar .top_row .menu .pull-right.menu_open, .sidebar .inputs .inputs_area .datatree .entry .pull-right.leaf {
   margin-left: .3em; }
 
 .fa-spin {
@@ -215,7 +215,7 @@
 
 .fa-remove:before,
 .fa-close:before,
-.top-row .menu .menu_open.menu_close:before,
+.sidebar .top_row .menu .menu_open.menu_close:before,
 .fa-times:before {
   content: ""; }
 
@@ -341,7 +341,7 @@
 .fa-align-right:before {
   content: ""; }
 
-.fa-align-justify:before, .top-row .menu .menu_open:before {
+.fa-align-justify:before, .sidebar .top_row .menu .menu_open:before {
   content: ""; }
 
 .fa-list:before {
@@ -2079,24 +2079,8 @@
 .fa-percent:before {
   content: ""; }
 
-.top-row {
-  color: white;
-  background-color: #1c546e;
-  border-bottom: 1px solid #164155;
-  padding: 10px 20px;
-  font-size: 40px;
-  font-family: 'Montserrat', sans-serif;
-  overflow: auto;
-  height: 80px; }
-  @media only screen and (min-width: 1200px) {
-    .top-row {
-      display: none; } }
-  .top-row .page_name {
-    float: left; }
-  .top-row .menu .menu_open {
-    float: right;
-    line-height: 56px;
-    cursor: hand; }
+body, html {
+  height: 100%; }
 
 .footer {
   min-height: 100px;
@@ -2104,14 +2088,18 @@
   background-color: #1c546e;
   border-top: 1px solid #164155;
   color: white;
-  text-align: center; }
+  text-align: center;
+  margin-top: -175px;
+  height: 175px;
+  position: relative; }
   @media only screen and (min-width: 1200px) {
     .footer {
       margin-left: 430px; } }
 
 .chart_area {
-  padding: 30px 15px 15px;
-  height: 100%; }
+  padding: 30px 15px 175px;
+  min-height: 100%;
+  overflow: auto; }
   @media only screen and (max-width: 1199px) {
     .chart_area {
       margin-top: 80px; } }
@@ -2131,9 +2119,6 @@
     min-height: 500px;
     max-height: 800px;
     margin-bottom: 20px; }
-
-body, html {
-  height: 100%; }
 
 .remove_series table td {
   padding-bottom: 15px; }
@@ -2168,11 +2153,26 @@ body, html {
       background-color: #167d9c;
       border-right: 1px solid #116078; }
       .sidebar.table_visible {
-        width: 830px; }
-      .sidebar .top-row {
-        display: block; } }
-  .sidebar .top-row {
+        width: 830px; } }
+  .sidebar .top_row {
+    color: white;
+    background-color: #1c546e;
+    border-bottom: 1px solid #164155;
+    padding: 10px 20px;
+    font-size: 40px;
+    font-family: 'Montserrat', sans-serif;
+    overflow: auto;
+    height: 80px;
     z-index: 10; }
+    @media only screen and (min-width: 1200px) {
+      .sidebar .top_row {
+        display: block; } }
+    .sidebar .top_row .page_name {
+      float: left; }
+    .sidebar .top_row .menu .menu_open {
+      float: right;
+      line-height: 56px;
+      cursor: hand; }
   .sidebar .bottom_area {
     z-index: 10;
     background-color: #167d9c;
