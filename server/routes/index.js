@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = [
     {
         method: 'GET',
@@ -34,7 +36,8 @@ module.exports = [
         path: '/app/{path*}',
         config: {
             handler: (request, reply) => {
-                reply.view('app/' + request.params.path)
+                let path = request.params.path.replace('.html', '');
+                reply.view('app/' + path)
             }
         }
     }

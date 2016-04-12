@@ -29,7 +29,7 @@ angular.module('app.linechart', ['chart.js'])
         scope: {
             series: '=' 
         }, 
-        templateUrl: 'app/displays/linechart', 
+        templateUrl: 'app/displays/linechart.html', 
         link: (scope) => {
             scope.$watchCollection('series', (newValue, oldValue) => {
                 scope.chart = converter.convertToChartJSData(newValue);

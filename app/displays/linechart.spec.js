@@ -2,7 +2,7 @@
 require('./linechart');
 
 describe('linechart test', function() { 
-    beforeEach(angular.mock.module('LineChart'));
+    beforeEach(angular.mock.module('app.linechart')); 
  
     beforeEach(angular.mock.module('app/displays/linechart.html'));
  
@@ -15,7 +15,7 @@ describe('linechart test', function() {
         $rootScope.series = [];
         var element = $compile('<sv-line-chart series="series"></sv-line-chart>')($rootScope);
         $rootScope.$digest();
-
+ 
         expect(element.html()).to.contain("canvas"); 
     });
 

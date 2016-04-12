@@ -37,16 +37,7 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
         menuOpen: false,
         tables: false
     };
-
-    let locationValues = $location.search();
-    console.log(locationValues);
-    locationValues.split(',').forEach((e) => {
-        let entry = _.find(dataTree, {id: e});
-        entry.getNext().then(() => {
-            
-        });
-    });
-    
+     
     function getSources() {  
         return StatisticsAPI.query().$promise.then((values) => {
             ctrl.dataTree = _.map(values, (e) => {
