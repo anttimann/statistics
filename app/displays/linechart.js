@@ -11,12 +11,12 @@ angular.module('app.linechart', ['chart.js'])
 .config(['ChartJsProvider', function (ChartJsProvider) {
     // Configure all charts
     ChartJsProvider.setOptions({
-        chartColors: common.colors, 
+        chartColors: common.colors,  
         maintainAspectRatio: false, 
         responsive: true,
         legendTemplate: "<span></span>" 
     });
- 
+    
     ChartJsProvider.setOptions('line', {
         legendTemplate: "<span></span>"
     });

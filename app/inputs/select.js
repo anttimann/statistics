@@ -8,12 +8,11 @@ angular.module('app.selectinput', [])
             title: '@',
             name: '@', 
             model: '=',
-            options: '=',
-            change: '='
+            options: '='
         },
         templateUrl: 'app/inputs/select',
         link: (scope) => {
-            scope.id = scope.name.replace(' ', '');
+            scope.id = scope.name.replace(' ', ''); 
         } 
     } 
 });

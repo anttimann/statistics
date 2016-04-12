@@ -4,7 +4,7 @@ div.sidebar(ng-class="{table_visible: stats.show.tables, menu_open: stats.show.m
             | Käppyrät
         div.menu.hidden-lg
             span.sr-only Toggle navigation
-            span.menu_open(ng-click="stats.show.menuOpen =! stats.show.menuOpen", ng-class="{menu_close: stats.show.menuOpen}")   
+            span.menu_open(ng-click="stats.show.menuOpen = !stats.show.menuOpen", ng-class="{menu_close: stats.show.menuOpen}")   
 
     div.bottom_area(ng-class="{menu_open: stats.show.menuOpen}")
         div.inputs(ng-class="{table_visible: stats.show.tables}")
@@ -13,7 +13,7 @@ div.sidebar(ng-class="{table_visible: stats.show.tables, menu_open: stats.show.m
                 sv-data-tree(tree-data="stats.dataTree")
 
         div.inputs(ng-if="stats.show.tables")
-            div.inputs_area(ng-if="stats.tables.options.length")
+            div.inputs_area
                 div.title {{stats.tables.title}}
                 div.inputs_input(ng-repeat="entry in stats.tables.options")
                     div(ng-if="!entry.time")

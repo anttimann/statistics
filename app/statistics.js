@@ -87,6 +87,7 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
     
     function addTable(parent, subjectPath) {
         ctrl.show.tables = true;
+        
         return StatisticsAPIData(subjectPath)
             .get({}, (values) => {
                 ctrl.tables.title = parent.text;
