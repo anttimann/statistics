@@ -5,6 +5,8 @@ require('./inputs/select');
 
 const _ = require('lodash');
   
+const helper = require('./stathelper');
+
 angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 'app.removablelist', 'app.datatree'])
  
 .config(['$httpProvider', function ($httpProvider) {
@@ -25,7 +27,7 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
     };
 })
     
-.controller('StatisticsController', function($routeParams, StatisticsAPI, StatisticsAPIData) {
+.controller('StatisticsController', function($routeParams, $location, StatisticsAPI, StatisticsAPIData) {
     var ctrl = this;
 
     ctrl.dataTree = getSources();
@@ -36,6 +38,15 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
         tables: false
     };
 
+    let locationValues = $location.search();
+    console.log(locationValues);
+    locationValues.split(',').forEach((e) => {
+        let entry = _.find(dataTree, {id: e});
+        entry.getNext().then(() => {
+            
+        });
+    });
+    
     function getSources() {  
         return StatisticsAPI.query().$promise.then((values) => {
             ctrl.dataTree = _.map(values, (e) => {
@@ -50,7 +61,7 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
                     ctrl.show.tables = false;
                     addSubjects(value, value.id);
                 };  
-                return value;  
+                return value;
             });
         }); 
     }
@@ -60,7 +71,7 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
             return;
         }  
           
-        StatisticsAPIData(subjectPath)
+        return StatisticsAPIData(subjectPath)
             .query({}, (values) => {
                 parent.children = _.map(values, (e) => {
                     let value = {
@@ -85,19 +96,20 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
     
     function addTable(parent, subjectPath) {
         ctrl.show.tables = true;
-        StatisticsAPIData(subjectPath)
+        return StatisticsAPIData(subjectPath)
             .get({}, (values) => {
                 ctrl.tables.title = parent.text;
                 ctrl.tables.options = _.map(values.variables, (e) => {
                     let value = { 
                         title: e.text,
+                        code: e.code,  
                         options: _.zipWith(e.values, e.valueTexts, (id, text) => {
                             return {
                                 id: id,
                                 text: text 
                             };
                         }),
-                        time: e.time || isYearData(e)   
+                        time: e.time || helper.isYearData(e)   
                     };
                     
                     value.chosen = value.options[0].id;
@@ -111,122 +123,30 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
     }
  
     function getSeriesData() {
-        let series = { 
-            data: [],    
-            get: function(tableValues, parentSubject, subjectPath) {
-                let query = createDataQueryValues(tableValues);
-                StatisticsAPIData(subjectPath)
+        let series = {
+            data: [],
+            get: function (tableValues, parentSubject, subjectPath) {
+                let query = helper.createDataQueryValues(tableValues);
+                return StatisticsAPIData(subjectPath)
                     .save({
                         query: query,
-                        response: { format: 'json' } 
-                    }, (values) => { 
-                        let entry = createSeries(values);
-                        entry.title = createSeriesName([parentSubject].concat(tableValues));
-                        
+                        response: {format: 'json'}
+                    }, (values) => {
+                        let entry = helper.createSeries(values);
+                        entry.title = helper.createSeriesName([parentSubject].concat(tableValues));
+
                         ctrl.series.data.push(entry);
                         ctrl.show.tables = false;
                         ctrl.show.menuOpen = false;
-                    }); 
-            },  
-            remove: function(title) {
+                    });
+            },
+            remove: function (title) {
                 ctrl.series.data = _.filter(ctrl.series.data, (e) => {
                     return e.title !== title;
                 });
-            } 
-        }; 
-        
-        return series;
- 
-        function createSeries(values) {
-            let entry = {};
-            let years = createLabels(values);
-
-            let reverse = years.length > 1 && parseInt(years[0]) > parseInt(years[1]);
-            entry.labels = reverse ? years.reverse() : years;
-
-            let data = createData(values, reverse);
-            entry.data = reverse ? data.reverse() : data;
-            
-            return entry;
-        }
-        
-        //function findLastData(dataTree, relativePath) {
-        //    let path = relativePath[0];
-        //    let value = _.find(dataTree, {id: path});
-        //
-        //    if (!value) return {};
-        //     
-        //    if (relativePath.length <= 1) {
-        //        return value;
-        //    } 
-        //    
-        //    return findLastData(value.children, relativePath.slice(1, relativePath.length + 1));  
-        //}
-        
-        function createSeriesName(types) {
-            types = _.filter(types, (t) => {
-                return !t.time;
-            });
-            return _.map(types, (type) => { 
-                if (type.children) { 
-                    return type.text; 
-                }   
-                return _.find(type.options, {id: type.chosen}).text;
-            }).join(' : '); 
-        }
-
-        function createLabels(values) {
-            let yearIndex = _.findIndex(values.columns, (e) => {
-                return isYearData(e);
-            });
-            
-            if (yearIndex === -1) {
-                return [2002];
             }
-            
-            return _.map(values.data, (e) => {
-                return e.key[yearIndex]
-            });
-        }
-        
-        function createData(values, reverse) {
-            return _.map(values.data, (e) => {
-                return e.values[0]
-            });
-        }
+        };
 
-        function createDataQueryValues(variables) {
-            let query = _.map(variables, (variable) => {
-                if (variable.time) {
-                    return {
-                        code: variable.title,
-                        selection: {
-                            filter: 'item',
-                            values: _.filter(_.map(variable.options, 'id'), (e) => {
-                                return !isNaN(e) || e === 'Arvo' 
-                            })
-                        }
-                    }
-                }
-                else {
-                    return {
-                        code: variable.title,
-                        selection: {
-                            filter: 'item',
-                            values: [
-                                variable.chosen
-                            ]
-                        }
-                    }
-                }
-            });
-
-            return query;
-        }
+        return series;
     }
-
-    function isYearData(entry) {
-        return ['vuosi', 'tilastovuosi', 'time'].indexOf(entry.code.toLowerCase()) >= 0;
-    }
-
 });

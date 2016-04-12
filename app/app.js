@@ -6,6 +6,6 @@ angular.module('app.statistics', ['ngRoute', 'app.pxdata'])
     $routeProvider 
         .when('/', { 
             controller: 'StatisticsController as stats',
-            templateUrl: 'partials/list'  
+            templateUrl: 'partials/page'  
         })   
 });   
