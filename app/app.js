@@ -3,7 +3,7 @@ require('./loadseries');
 
 angular.module('app.statistics', ['ngRoute', 'app.pxdata', 'app.loadseries'])
 
-.config(function($routeProvider) {
+.config(['$routeProvider', function($routeProvider) {
     $routeProvider 
         .when('/:seriesId?', { 
             controller: 'StatisticsController as stats',
@@ -13,4 +13,4 @@ angular.module('app.statistics', ['ngRoute', 'app.pxdata', 'app.loadseries'])
             controller: 'LoadSeriesController',
             template: '<span></span>'
         });
-});    
+}]);    

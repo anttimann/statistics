@@ -1,4 +1,5 @@
 'use strict';
+const pkg = require('../../package.json');
 
 module.exports = [
     {
@@ -7,8 +8,8 @@ module.exports = [
         config: {
             handler: (request, reply) => {
                 reply.view('templates/index', {
-                    g_page_name: process.env.npm_package_name,
-                    g_page_description: process.env.npm_package_description
+                    g_page_name: pkg.name,
+                    g_page_description: pkg.description
                 })
             }
         }

@@ -39,10 +39,10 @@ angular.module('app.shareseries', ['ui.bootstrap'])
     
 .controller('ShareSeriesCtrl', ['$scope', '$uibModalInstance', '$location', 'seriesId',
     ($scope, $uibModalInstance, $location, seriesId) => {  
-     $scope.url = $location.absUrl() + '#/kayrat/' + seriesId;
+     $scope.url = $location.absUrl().replace(/\#.*/, '') + '#/kayrat/' + seriesId; 
     
-    $scope.close = function () {  
-        $uibModalInstance.close();
+    $scope.close = function () {
+        $uibModalInstance.close();  
     };
 }]);
  
