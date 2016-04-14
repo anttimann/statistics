@@ -27,7 +27,10 @@ function store(request, reply) {
         return reply(Boom.notFound('Retry later'));
     }
     
-    db.collection('series').insertOneAsync(request.payload)
+    let newSeries = request.payload;
+    newSeries.insertionDate = new Date();
+    
+    db.collection('series').insertOneAsync(newSeries)
         .then((d) => {
             reply().created(d.insertedId);
         });
