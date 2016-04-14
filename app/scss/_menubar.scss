@@ -1,0 +1,131 @@
+$scroll_width: 30px;
+$input_area_width: $sidebar-width - $scroll_width;
+$menu_z_index: 10;
+
+.menubar {
+  overflow-y: auto;
+  color: white;
+  float: left;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+
+
+  @include topbar_menu() {
+    width: 100%;
+    
+    &.menu_open {
+      height: 100%;
+      display: block;
+    }
+  }
+   
+  @include sidebar_menu() {
+    height: 100%;
+    width: $sidebar-width;
+    background-color: $background-color2;
+    border-right: $background-border2;
+    
+    &.tables_visible {
+      width: $input_area_width * 2 + $scroll_width;
+    }
+  }
+
+  .top_row {
+    color: white;
+    background-color: $background-color1;
+    border-bottom: $background-border1;
+    padding: 10px 20px;
+    font-size: 40px;
+    font-family: 'Montserrat', sans-serif;
+    overflow: auto;
+    height: $toprow-height;
+    z-index: $menu_z_index;
+
+    .page_name {
+      float: left;
+    }
+
+    .menu {
+      .menu_open {
+        @extend .fa;
+        @extend .fa-align-justify;
+        float: right;
+        line-height: 56px;
+        cursor: hand;
+
+        &.menu_close {
+          @extend .fa-close;
+        }
+      }
+    }
+  }
+
+  .bottom_area {
+    z-index: $menu_z_index;
+    background-color: $background-color2;
+    border-right: $background-border2;
+    overflow: auto;
+
+    @include topbar_menu() {
+      display: none;
+      &.menu_open {
+        display: block;
+      }
+    }
+    
+  }
+  
+  .series {
+    padding: 40px 15px 15px;
+    max-width: $input_area_width;
+    float: left;
+
+    @include topbar_menu() {
+      &.subjects.tables_visible {
+        display: none;
+      }
+    }
+    
+    .series_input {
+      margin-bottom: 10px;
+
+      button {
+        float: right;
+        font-size: 17px;
+
+        .add_series {
+          background: hsl(141, 75%, 35%);
+        }
+
+        &.hide_view {
+          float: left;
+        }
+      }
+    }
+    
+    .datatree {
+      .entry {
+        cursor: hand;
+        padding-bottom: 10px;
+        
+        .leaf {
+          @extend .fa;
+          @extend .fa-caret-right;
+          margin-left: 5px;
+        }
+      }
+      
+      .active {
+        font-weight: bolder;
+      }
+
+      @include topbar_menu() {
+        ul {
+          -webkit-padding-start: 8px;
+        }
+      }
+    }
+  }
+}

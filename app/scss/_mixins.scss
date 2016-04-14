@@ -23,4 +23,16 @@
   @else if $media == wide-screens {
     @media only screen and (min-width: 1200px) { @content; }
   }
+} 
+
+@mixin sidebar_menu() {
+  @include respond-to(wide-screens) {
+    @content;
+  };
+}
+
+@mixin topbar_menu() {
+  @include respond-to(max-medium-screens) {
+    @content;
+  };
 }

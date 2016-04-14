@@ -1,4 +1,4 @@
-div.sidebar(ng-class="{table_visible: stats.show.tables, menu_open: stats.show.menuOpen}")
+div.menubar(ng-class="{tables_visible: stats.show.tables, menu_open: stats.show.menuOpen}")
     div.top_row
         div.page_name
             | Käppyrät
@@ -7,21 +7,19 @@ div.sidebar(ng-class="{table_visible: stats.show.tables, menu_open: stats.show.m
             span.menu_open(ng-click="stats.show.menuOpen = !stats.show.menuOpen", ng-class="{menu_close: stats.show.menuOpen}")   
 
     div.bottom_area(ng-class="{menu_open: stats.show.menuOpen}")
-        div.inputs(ng-class="{table_visible: stats.show.tables}")
-            div.inputs_area
-                div.title Valitse sarja
-                sv-data-tree(tree-data="stats.dataTree")
+        div.series.subjects(ng-class="{tables_visible: stats.show.tables}")
+            div.title Valitse sarja
+            sv-data-tree(tree-data="stats.dataTree")
 
-        div.inputs(ng-if="stats.show.tables")
-            div.inputs_area
-                div.title {{stats.tables.title}}
-                div.inputs_input(ng-repeat="entry in stats.tables.options")
-                    div(ng-if="!entry.time")
-                        sv-select-input(title="{{entry.title}}", options="entry.options", name="{{entry.title}}", model="entry.chosen")
-                div.inputs_input
-                    button.btn.btn-default.hide_view(ng-click="stats.show.tables = false") Piilota
-                div.inputs_input
-                    button.btn.btn-success.add_series(ng-click="stats.tables.getSeriesData()") Lisää sarja kuvaan
+        div.series.tables(ng-if="stats.show.tables")
+            div.title {{stats.tables.title}}
+            div.series_input(ng-repeat="entry in stats.tables.options")
+                div(ng-if="!entry.time")
+                    sv-select-input(title="{{entry.title}}", options="entry.options", name="{{entry.title}}", model="entry.chosen")
+            div.series_input
+                button.btn.btn-default.hide_view(ng-click="stats.show.tables = false") Piilota
+            div.series_input
+                button.btn.btn-success.add_series(ng-click="stats.tables.getSeriesData()") Lisää sarja kuvaan
 
 div.chart_area
     div(ng-if="stats.series.data.length")
