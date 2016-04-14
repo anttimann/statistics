@@ -1,12 +1,9 @@
 require('angular-ui-bootstrap');
+require('../services/storeseries');
 
-angular.module('app.shareseries', ['ui.bootstrap'])
-
-.factory('SeriesAPI', ['$resource', function($resource) {
-    return $resource('/series');
-}])
-
-.directive('svShareSeries', ['$q', '$uibModal', 'SeriesAPI', ($q, $uibModal, SeriesAPI) => {
+angular.module('app.shareseries', ['ui.bootstrap', 'app.storeseries'])
+    
+.directive('svShareSeries', ['$uibModal', 'storeSeries', ($uibModal, storeSeries) => {
     return {
         restrict: 'E',
         transclude: true,
@@ -14,21 +11,15 @@ angular.module('app.shareseries', ['ui.bootstrap'])
             text: '@',
             seriesQuery: '='
         },
-        templateUrl: 'app/actions/shareseries', 
+        templateUrl: 'app/actions/shareseries.html',
         link: (scope) => { 
             scope.open = () => {
                 $uibModal.open({
-                    templateUrl: 'app/actions/shareseriesmodal',
+                    templateUrl: 'app/actions/shareseriesmodal.html',
                     controller: 'ShareSeriesCtrl',
                     resolve: {
                         seriesId: function () {
-                            let deferred = $q.defer();
-                            SeriesAPI.save(
-                                {data: scope.seriesQuery()},
-                                (response, headerFunc) => {
-                                    deferred.resolve(headerFunc().location); 
-                                }); 
-                            return deferred.promise;
+                            return storeSeries.store(scope.seriesQuery());
                         }
                     }
                 });  
@@ -38,7 +29,7 @@ angular.module('app.shareseries', ['ui.bootstrap'])
 }])
     
 .controller('ShareSeriesCtrl', ['$scope', '$uibModalInstance', '$location', 'seriesId',
-    ($scope, $uibModalInstance, $location, seriesId) => {  
+    function($scope, $uibModalInstance, $location, seriesId) {  
      $scope.url = $location.absUrl().replace(/\#.*/, '') + '#/kayrat/' + seriesId; 
     
     $scope.close = function () {

@@ -2176,6 +2176,9 @@ body, html {
     z-index: 10; }
     .menubar .top_row .page_name {
       float: left; }
+    @media only screen and (min-width: 1200px) {
+      .menubar .top_row .menu {
+        display: none; } }
     .menubar .top_row .menu .menu_open {
       float: right;
       line-height: 56px;

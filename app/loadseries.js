@@ -1,15 +1,12 @@
 require('./services/localstorage');
+require('./services/storeseries');
 
-angular.module('app.loadseries', ['ngResource', 'app.localstorage'])
+angular.module('app.loadseries', ['ngResource', 'app.localstorage', 'app.storeseries'])
 
-.factory('SeriesAPI', ['$resource', function($resource) {
-    return $resource('/series/:seriesId');
-}])
-
-.controller('LoadSeriesController', ['$routeParams', '$window', 'localStorage', 'SeriesAPI',
-    function($routeParams, $window, localStorage, SeriesAPI) {
-    SeriesAPI.get({seriesId: $routeParams.seriesId}).$promise.then((response) => {
-        localStorage.save(response.data);
-        $window.location.href = '/'; 
-    }); 
+.controller('LoadSeriesController', ['$routeParams', '$window', 'localStorage', 'storeSeries',
+    function($routeParams, $window, localStorage, storeSeries) {
+        storeSeries.get($routeParams.seriesId).then((data) => {
+            localStorage.save(data);
+            $window.location.href = '/';  
+        }); 
 }]);

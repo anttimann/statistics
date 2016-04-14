@@ -2,7 +2,7 @@ div.menubar(ng-class="{tables_visible: stats.show.tables, menu_open: stats.show.
     div.top_row
         div.page_name
             | Käppyrät
-        div.menu.hidden-lg
+        div.menu
             span.sr-only Toggle navigation
             span.menu_open(ng-click="stats.show.menuOpen = !stats.show.menuOpen", ng-class="{menu_close: stats.show.menuOpen}")   
 
@@ -13,12 +13,10 @@ div.menubar(ng-class="{tables_visible: stats.show.tables, menu_open: stats.show.
 
         div.series.tables(ng-if="stats.show.tables")
             div.title {{stats.tables.title}}
-            div.series_input(ng-repeat="entry in stats.tables.options")
-                div(ng-if="!entry.time")
-                    sv-select-input(title="{{entry.title}}", options="entry.options", name="{{entry.title}}", model="entry.chosen")
+            div.series_input(ng-repeat="entry in stats.tables.options | filter: {time: 'false'}")
+                sv-select-input(title="{{entry.title}}", options="entry.options", name="{{entry.title}}", model="entry.chosen")
             div.series_input
                 button.btn.btn-default.hide_view(ng-click="stats.show.tables = false") Piilota
-            div.series_input
                 button.btn.btn-success.add_series(ng-click="stats.tables.getSeriesData()") Lisää sarja kuvaan
 
 div.chart_area

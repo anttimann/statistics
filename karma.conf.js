@@ -19,7 +19,7 @@ module.exports = function(config) {
         'node_modules/angular-mocks/angular-mocks.js',
         'node_modules/angular-resource/angular-resource.js',
         'node_modules/angular-route/angular-route.js',
-
+        
         'app/*.spec.js',
         'app/**/*.spec.js',
         'app/**/*.jade',
@@ -28,8 +28,11 @@ module.exports = function(config) {
 
 
     // list of files to exclude
-    exclude: [
-    ],
+      exclude: [
+          'node_modules/angular/angular-loader.js',
+          'node_modules/angular/*.min.js',
+          'node_modules/angular/angular-scenario.js'
+      ],
 
 
     // preprocess matching files before serving them to the browser
