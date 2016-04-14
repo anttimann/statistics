@@ -2096,6 +2096,11 @@ body, html {
     .footer {
       margin-left: 430px; } }
 
+.title {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 10px; }
+
 .chart_area {
   padding: 30px 15px 250px;
   min-height: 100%;
@@ -2119,18 +2124,20 @@ body, html {
     min-height: 500px;
     max-height: 800px;
     margin-bottom: 20px; }
-
-.remove_series table td {
-  padding-bottom: 15px; }
-  .remove_series table td i {
-    margin-right: 10px; }
-  .remove_series table td button {
-    margin-left: 10px; }
-
-.title {
-  font-weight: 700;
-  font-size: 18px;
-  margin-bottom: 10px; }
+  .chart_area .remove_series table td {
+    padding-bottom: 15px; }
+    .chart_area .remove_series table td i {
+      margin-right: 10px; }
+    .chart_area .remove_series table td button {
+      margin-left: 10px; }
+  .chart_area sv-share-series {
+    width: 100%;
+    margin: 20px 0;
+    display: block; }
+    .chart_area sv-share-series button {
+      display: block;
+      margin: auto;
+      width: 200px; }
 
 .sidebar {
   overflow-y: auto;
@@ -2208,3 +2215,12 @@ body, html {
           margin-left: 5px; }
       .sidebar .inputs .inputs_area .datatree .active {
         font-weight: bolder; }
+
+.modal-content .url_input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0; }
+
+.modal-content .more_info {
+  font-style: italic;
+  font-size: smaller; }

@@ -1,0 +1,8 @@
+div.modal-header
+    h3.modal-title Jaa käyräsi
+div.modal-body
+    div Tässä on polku, jolla voit jakaa nykyisen käyräsi.
+    input.url_input(type="text", value="{{url}}")
+    div.more_info Polku palauttaa tämän hetkiset käyrät. Jos muokkaat kuvaa, luo uusi polku.    
+div.modal-footer
+    button.btn.btn-primary(ng-click="close()") Sulje

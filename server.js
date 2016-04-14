@@ -2,7 +2,10 @@ const Hapi = require('hapi');
 const config = require('./server/config');
 const server = new Hapi.Server(config.hapi.options);
 
-server.connection({host: config.host, port: config.port});
+server.connection({
+    host: config.host, port: config.port, 
+    routes: {state: {parse: false, failAction: 'ignore'}}
+});
 
 const plugins = [
     {

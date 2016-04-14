@@ -30,8 +30,7 @@ module.exports = [
                 reply.view('app/' + request.params.partial)
             }
         }
-    }
-    , {
+    }, {
         method: 'GET',
         path: '/app/{path*}',
         config: {

@@ -30,9 +30,12 @@ div.chart_area
         div.no_series_text
             | Lisää sarja valikosta
             
-    div.remove_series(ng-if="stats.series.data.length")
-        div.title Kuvassa olevat sarjat
-        sv-removable-list(series="stats.series.data", remove="stats.series.remove")
+    div(ng-if="stats.series.data.length")
+        div.remove_series
+            div.title Kuvassa olevat sarjat
+            sv-removable-list(series="stats.series.data", remove="stats.series.remove")
+        div.share_series
+            sv-share-series(text="Jaa kuva", series-query="stats.getSeriesQueries")
 
 div.footer
     div.container-fluid

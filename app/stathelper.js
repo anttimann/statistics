@@ -16,7 +16,7 @@ function createSeriesName(types) {
 
 function createSeries(values, title) { 
     let entry = {}; 
-    let years = createLabels(values);
+    let years = createLabels(values, title);
 
     let reverse = years.length > 1 && parseInt(years[0]) > parseInt(years[1]);
     entry.labels = reverse ? years.reverse() : years;
@@ -30,13 +30,15 @@ function createSeries(values, title) {
 }
 
 
-function createLabels(values) {
+function createLabels(values, title) {
     let yearIndex = _.findIndex(values.columns, (e) => {
         return isYearData(e);
     });
 
     if (yearIndex === -1) {
-        return [2002];
+        let regex = /[\d]{4}(?![\d])/;
+        let value = title.match(regex);
+        return value ? [value[0]] : ['2002'];
     }
 
     return _.map(values.data, (e) => {
@@ -44,7 +46,7 @@ function createLabels(values) {
     });
 }
 
-function createData(values, reverse) {
+function createData(values) {
     return _.map(values.data, (e) => {
         return e.values[0]
     });

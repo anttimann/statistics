@@ -31,4 +31,24 @@ describe('stathelper  test', function() {
             title: 'test'
         });
     });
+
+    it('Create series, missing year', function() {
+        expect(helper.createSeries({
+            columns: [{code: 'type1', text: 'type1'}],
+            data: [{key: ['typeValue'], values: ['123']}]
+        }, 'test')).to.deep.equal({
+            data: ['123'],
+            labels: ['2002'],
+            title: 'test'
+        });
+
+        expect(helper.createSeries({
+            columns: [{code: 'type1', text: 'type1'}],
+            data: [{key: ['typeValue'], values: ['123']}]
+        }, 'test 2001')).to.deep.equal({
+            data: ['123'],
+            labels: ['2001'], 
+            title: 'test 2001' 
+        });
+    });
 });

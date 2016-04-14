@@ -5,7 +5,9 @@ const config  = require('./server/config');
 exports.register = (server, options, next) => {
     let plugins = [
         { register: require('vision') },
-        { register: require('inert') }
+        { register: require('inert') },
+        { register: require('hapi-swagger') },
+        { register: require('./server/series') }
     ];
     
     server.register(plugins, (err) => {

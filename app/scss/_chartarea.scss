@@ -27,25 +27,35 @@
     max-height: 800px;
     margin-bottom: 20px;
   }
-}
 
-.remove_series {
-  
-  table td {
-    padding-bottom: 15px;
-    
-    i {
-      margin-right: 10px;
+  .remove_series {
+    table td {
+      padding-bottom: 15px;
+
+      i {
+        margin-right: 10px;
+      }
+
+      button {
+        margin-left: 10px;
+      }
     }
+  }
+
+  sv-share-series {
+    width: 100%;
+    margin: 20px 0;
+    display: block;
     
     button {
-      margin-left: 10px;
+      display: block;
+      margin: auto;
+      width: 200px;
     }
   }
 }
 
-.title {
-  font-weight: 700;
-  font-size: 18px;
-  margin-bottom: 10px;
-}
+
+
+
+

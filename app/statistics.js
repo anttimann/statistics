@@ -1,48 +1,48 @@
-require('angular-local-storage');
-
+require('./services/localstorage');
 require('./displays/linechart');
 require('./displays/removablelist'); 
 require('./displays/datatree');
 require('./inputs/select');
+require('./actions/shareseries');
 
 const _ = require('lodash');
 
 const helper = require('./stathelper');
 
-angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 'app.removablelist', 'app.datatree', 'LocalStorageModule'])
+angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 'app.removablelist', 'app.datatree', 'app.localstorage', 'app.shareseries'])
  
-.config(['$httpProvider', 'localStorageServiceProvider', function ($httpProvider, localStorageServiceProvider) {
+.config(['$httpProvider', function ($httpProvider) {
     //Reset headers to avoid OPTIONS request (aka preflight) 
     $httpProvider.defaults.headers.common = {};
-    $httpProvider.defaults.headers.post = {}; 
+    $httpProvider.defaults.headers.post = {};
     $httpProvider.defaults.headers.put = {};
     $httpProvider.defaults.headers.patch = {};
- 
-    localStorageServiceProvider.setPrefix('sv');
-}]) 
-
-.factory('StatisticsAPI', function($resource) {
+}])
+    
+.factory('StatisticsAPI', ['$resource', function($resource) {
     return $resource('http://pxnet2.stat.fi/PXWeb/api/v1/fi/:source/:subject/:subrealm/:realm');
-})
+}])
 
 .factory('StatisticsAPIData', function($resource) {
     return function(path) {
         return $resource('http://pxnet2.stat.fi/PXWeb/api/v1/fi/' + path);
-    };
+    }; 
 })
     
-.controller('StatisticsController', function($routeParams, $location, localStorageService, StatisticsAPI, StatisticsAPIData) {
+.controller('StatisticsController', ['$routeParams', '$location', 'localStorage', 'StatisticsAPI', 'StatisticsAPIData',
+    function($routeParams, $location, localStorage, StatisticsAPI, StatisticsAPIData) {
     var ctrl = this;
 
     ctrl.dataTree = getSources();
     ctrl.tables = {};
     ctrl.series = getSeriesData();
+    ctrl.getSeriesQueries = localStorage.get;
     ctrl.show = {
         menuOpen: false,
         tables: false
     };
-
-    let seriesData = getStoredData();
+    
+    let seriesData = localStorage.get();
     if (seriesData.length && !ctrl.series.data.length) {
         seriesData.reverse().forEach((d) => {
             ctrl.series.getData(d.path, d.query, d.title);
@@ -126,14 +126,13 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
     }
  
     function getSeriesData() {
-        let series = {
+        let series = {  
             data: [],
             get: function (tableValues, parentSubject, subjectPath) {
                 let title = helper.createSeriesName([parentSubject].concat(tableValues));
                 let query = helper.createDataQueryValues(tableValues);
                 
-                let seriesData = getStoredData(); 
-                localStorageService.set('seriesData', seriesData.concat([{title: title, query: query, path: subjectPath}]));
+                localStorage.add({title: title, query: query, path: subjectPath});
                 return series.getData(subjectPath, query, title);
 
             },
@@ -144,15 +143,17 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
                         response: {format: 'json'}
                     }, (values) => {
                         let entry = helper.createSeries(values, title);
+                        entry.path = path;
 
                         ctrl.series.data.push(entry);
                         ctrl.show.tables = false;
                         ctrl.show.menuOpen = false;
+                    }, (error) => {
+                        localStorage.save([]);
                     });
             },
             remove: function (title) {
-                let seriesData = getStoredData();
-                localStorageService.set('seriesData', _.filter(seriesData, (e) => {
+                localStorage.save(_.filter(seriesData, (e) => {
                     return e.title !== title;
                 }));
                 
@@ -164,12 +165,4 @@ angular.module('app.pxdata', ['ngResource', 'app.selectinput', 'app.linechart', 
 
         return series;
     }
-    
-    function getStoredData() {
-        let seriesData = localStorageService.get('seriesData');
-        if (!seriesData || !Array.isArray(seriesData)) {
-            return [];
-        }
-        return seriesData;
-    }
-});
+}]);
