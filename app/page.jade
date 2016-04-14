@@ -27,7 +27,7 @@ div.chart_area
     div(ng-if="stats.series.data.length")
         sv-line-chart(series="stats.series.data")
     div(ng-if="!stats.series.data.length")
-        div.no_series_text
+        div.no_series_text(ng-click="stats.show.menuOpen = !stats.show.menuOpen")
             | Lisää sarja valikosta
             
     div(ng-if="stats.series.data.length")

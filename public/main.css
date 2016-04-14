@@ -2118,6 +2118,9 @@ body, html {
     font-size: 50px;
     font-weight: 900;
     color: rgba(0, 0, 0, 0.36); }
+    @media only screen and (max-width: 1199px) {
+      .chart_area .no_series_text {
+        cursor: hand; } }
   .chart_area sv-line-chart {
     display: block;
     height: auto;

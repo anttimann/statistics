@@ -18,6 +18,10 @@
     font-size: 50px;
     font-weight: 900;
     color: rgba(0, 0, 0, 0.36);
+
+    @include respond-to(max-medium-screens) {
+      cursor: hand;
+    }
   }
 
   sv-line-chart {
