@@ -2082,6 +2082,9 @@
 body, html {
   height: 100%; }
 
+body > div {
+  height: 100%; }
+
 .footer {
   min-height: 100px;
   padding: 50px 10px;
@@ -2120,7 +2123,7 @@ body, html {
     color: rgba(0, 0, 0, 0.36); }
     @media only screen and (max-width: 1199px) {
       .chart_area .no_series_text {
-        cursor: hand; } }
+        cursor: pointer; } }
   .chart_area sv-line-chart {
     display: block;
     height: auto;
@@ -2182,7 +2185,7 @@ body, html {
     .menubar .top_row .menu .menu_open {
       float: right;
       line-height: 56px;
-      cursor: hand; }
+      cursor: pointer; }
   .menubar .bottom_area {
     z-index: 10;
     background-color: #167d9c;
@@ -2210,7 +2213,7 @@ body, html {
         .menubar .series .series_input button.hide_view {
           float: left; }
     .menubar .series .datatree .entry {
-      cursor: hand;
+      cursor: pointer;
       padding-bottom: 10px; }
       .menubar .series .datatree .entry .leaf {
         margin-left: 5px; }

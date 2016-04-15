@@ -13,29 +13,30 @@ angular.module('app.stats', ['app.pxnet',  'app.selectinput', 'app.linechart', '
     function($routeParams, pxNetService, localStorage) {
     var ctrl = this;
 
-    ctrl.dataTree = [];
-        
+    ctrl.dataTree = []; 
+ 
     pxNetService.getData().then((data) => {
         ctrl.dataTree = ctrl.dataTree.concat(data);
     });
         
     ctrl.show = {
         menuOpen: false,
-        tables: false
+        tables: false 
     };
         
     ctrl.getTableData = (entry) => {
         ctrl.show.tables = true;
-        ctrl.show.menuOpen = false;
 
         entry.getChildren().then((tables) => {
             ctrl.tables = tables;
         });
-    };
+    }; 
  
     ctrl.series = [];    
     ctrl.addSeries = () => { 
         ctrl.show.tables = false;
+        ctrl.show.menuOpen = false;
+        
         ctrl.tables.getSeriesData().then((seriesData) => {
             ctrl.series.push(seriesData);
         }); 
@@ -53,7 +54,7 @@ angular.module('app.stats', ['app.pxnet',  'app.selectinput', 'app.linechart', '
     };
         
     ctrl.getSeriesQueries = localStorage.get; 
-        
+         
     let seriesData = localStorage.get();
     if (seriesData.length) {
         seriesData.forEach((d) => {

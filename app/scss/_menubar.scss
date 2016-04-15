@@ -57,7 +57,7 @@ $menu_z_index: 10;
         @extend .fa-align-justify;
         float: right;
         line-height: 56px;
-        cursor: hand;
+        cursor: pointer;
 
         &.menu_close {
           @extend .fa-close;
@@ -111,7 +111,7 @@ $menu_z_index: 10;
     
     .datatree {
       .entry {
-        cursor: hand;
+        cursor: pointer;
         padding-bottom: 10px;
         
         .leaf {

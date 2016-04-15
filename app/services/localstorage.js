@@ -1,5 +1,4 @@
 'use strict';
-
 require('angular-local-storage');
 
 angular.module('app.localstorage', ['LocalStorageModule'])

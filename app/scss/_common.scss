@@ -2,6 +2,9 @@ body, html {
   height: 100%;
 }
 
+body > div {
+  height: 100%;
+}
 
 .footer {
   min-height: 100px;
