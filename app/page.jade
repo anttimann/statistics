@@ -9,27 +9,27 @@ div.menubar(ng-class="{tables_visible: stats.show.tables, menu_open: stats.show.
     div.bottom_area(ng-class="{menu_open: stats.show.menuOpen}")
         div.series.subjects(ng-class="{tables_visible: stats.show.tables}")
             div.title Valitse sarja
-            sv-data-tree(tree-data="stats.dataTree")
-
+            sv-data-tree(tree-data="stats.dataTree", leaf-clicked="stats.getTableData")
+ 
         div.series.tables(ng-if="stats.show.tables")
             div.title {{stats.tables.title}}
             div.series_input(ng-repeat="entry in stats.tables.options | filter: {time: 'false'}")
                 sv-select-input(title="{{entry.title}}", options="entry.options", name="{{entry.title}}", model="entry.chosen")
             div.series_input
                 button.btn.btn-default.hide_view(ng-click="stats.show.tables = false") Piilota
-                button.btn.btn-success.add_series(ng-click="stats.tables.getSeriesData()") Lisää sarja kuvaan
+                button.btn.btn-success.add_series(ng-click="stats.addSeries()") Lisää sarja kuvaan
 
 div.chart_area
-    div(ng-if="stats.series.data.length")
-        sv-line-chart(series="stats.series.data")
-    div(ng-if="!stats.series.data.length")
+    div(ng-if="stats.series.length")
+        sv-line-chart(series="stats.series")
+    div(ng-if="!stats.series.length")
         div.no_series_text(ng-click="stats.show.menuOpen = !stats.show.menuOpen")
             | Lisää sarja valikosta
             
-    div(ng-if="stats.series.data.length")
+    div(ng-if="stats.series.length")
         div.remove_series
             div.title Kuvassa olevat sarjat
-            sv-removable-list(series="stats.series.data", remove="stats.series.remove")
+            sv-removable-list(series="stats.series", remove="stats.removeSeries")
         div.share_series
             sv-share-series(text="Jaa kuva", series-query="stats.getSeriesQueries")
 

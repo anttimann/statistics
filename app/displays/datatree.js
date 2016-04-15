@@ -1,16 +1,16 @@
 angular.module('app.datatree', [])
 
-.directive('svDataTree', function() {
+.directive('svDataTree', function() { 
     return {
         restrict: 'E',
         transclude: true,
         scope: {
-            treeData: '='
+            treeData: '=',
+            leafClicked: '='
         }, 
-        templateUrl: 'app/displays/datatree',
+        templateUrl: 'app/displays/datatree.html',
         link: (scope) => {
             scope.chosenPath = [];
-            
             scope.handleClick = (entry) => {  
                 let entryIndex = entry.path.split('/').length - 1;
                 if (scope.chosenPath[entryIndex] === entry && !entry.leaf) {
@@ -20,7 +20,14 @@ angular.module('app.datatree', [])
                     scope.chosenPath[entryIndex] = entry;
                 }
   
-                entry.getNext();
+                if (entry.leaf) {
+                    scope.leafClicked(entry);
+                }
+                else {
+                    entry.getChildren().then((children) => {
+                        entry.children = children;
+                    });
+                }
             };
             
         }

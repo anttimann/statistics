@@ -13,4 +13,4 @@ function click(el) {
 
 module.exports = {
     click: click
-}
+};

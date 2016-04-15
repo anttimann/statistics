@@ -2,7 +2,7 @@ script(type="text/ng-template", id="dataTreePart")
     div.entry(ng-click="handleClick(entry)", ng-class="{active: chosenPath.indexOf(entry) !== -1}") {{entry.text}}
         span.leaf(ng-if="entry.leaf")
     ul(ng-if="chosenPath.indexOf(entry) !== -1 && !entry.leaf")
-        li(ng-repeat="entry in entry.children", ng-include="'dataTreePart'")
+        li(ng-repeat="entry in entry.children track by $index", ng-include="'dataTreePart'")
 
 
 div.datatree

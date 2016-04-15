@@ -1,12 +1,12 @@
-require('./statistics');
+require('./stats');
 require('./loadseries');
 
-angular.module('app.statistics', ['ngRoute', 'app.pxdata', 'app.loadseries'])
+angular.module('app.statistics', ['ngRoute', 'app.stats', 'app.loadseries'])
 
 .config(['$routeProvider', function($routeProvider) {
     $routeProvider 
         .when('/:seriesId?', { 
-            controller: 'StatisticsController as stats',
+            controller: 'StatsCtrl as stats',
             templateUrl: 'partials/page'
         })
         .when('/kayrat/:seriesId', {

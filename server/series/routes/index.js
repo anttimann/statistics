@@ -34,7 +34,8 @@ module.exports = [
                                 values: Joi.array().items(Joi.string()).single().required()
                             }
                         }).required(),
-                        path: Joi.string().required()
+                        path: Joi.string().required(),
+                        source: Joi.string().required()
                     }).single().required()
                 }
             }
