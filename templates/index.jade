@@ -13,7 +13,8 @@ html(lang="en", ng-app="app.statistics")
         script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.js")
         script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-resource.js")
         script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-route.js")
-        script(src="/public/app.min.js")
+        - var script = g_development_env ? "/public/app.js" : "/public/app.min.js";
+        script(src=script)
 
     body
         div(ng-view)

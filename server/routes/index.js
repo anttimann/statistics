@@ -9,7 +9,8 @@ module.exports = [
             handler: (request, reply) => {
                 reply.view('templates/index', {
                     g_page_name: pkg.name,
-                    g_page_description: pkg.description
+                    g_page_description: pkg.description,
+                    g_development_env: !process.env.OPENSHIFT_NODEJS_PORT
                 })
             }
         }

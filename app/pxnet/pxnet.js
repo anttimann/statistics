@@ -3,6 +3,7 @@ require('./../services/localstorage');
 const _ = require('lodash');
 
 const helper = require('./stathelper');
+const common = require('../common/common');
 
 angular.module('app.pxnet', ['ngResource', 'app.localstorage'])
  
@@ -14,11 +15,11 @@ angular.module('app.pxnet', ['ngResource', 'app.localstorage'])
     $httpProvider.defaults.headers.patch = {};
 }]) 
     
-.factory('pxNetAPI', function($resource) { 
+.factory('pxNetAPI', ['$resource', function($resource) { 
     return function(path) {
         return $resource('http://pxnet2.stat.fi/PXWeb/api/v1/fi/' + path);
     }; 
-})
+}])
 
 .factory('pxNetService', ['$q', 'pxNetAPI', 'localStorage', function($q, pxNetAPI, localStorage) {
     return {
@@ -81,7 +82,7 @@ angular.module('app.pxnet', ['ngResource', 'app.localstorage'])
 
         let deferred = $q.defer();
         
-        pxNetAPI(subjectPath)
+        pxNetAPI(subjectPath)    
             .get({}, (values) => {
                 cache.title = parent.text;
                 cache.options = _.map(values.variables, (e) => {
@@ -106,11 +107,11 @@ angular.module('app.pxnet', ['ngResource', 'app.localstorage'])
                 };
                 deferred.resolve(cache);
             });
-        return deferred.promise;
+        return deferred.promise; 
     }
 
     function getSeriesData(tableValues, parentSubject, subjectPath) {
-        let title = helper.createSeriesName([parentSubject].concat(tableValues));
+        let title = common.createSeriesName([parentSubject].concat(tableValues));
         let query = helper.createDataQueryValues(tableValues);
 
         localStorage.add({source: 'pxnet', title: title, query: query, path: subjectPath});
@@ -126,8 +127,9 @@ angular.module('app.pxnet', ['ngResource', 'app.localstorage'])
             }, (values) => {
                 let entry = helper.createSeries(values, title);
                 entry.path = path;
-
                 deferred.resolve(entry);
+            }, (err) => { 
+                deferred.resolve(null);
             });
         return deferred.promise;
     }

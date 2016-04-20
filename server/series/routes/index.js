@@ -27,13 +27,7 @@ module.exports = [
                 payload: {
                     data: Joi.array().items({
                         title: Joi.string().required(),
-                        query: Joi.array().items({
-                            code: Joi.string().required(),
-                            selection: {
-                                filter: Joi.string().required(),
-                                values: Joi.array().items(Joi.string()).single().required()
-                            }
-                        }).required(),
+                        query: Joi.any().required(),
                         path: Joi.string().required(),
                         source: Joi.string().required()
                     }).single().required()

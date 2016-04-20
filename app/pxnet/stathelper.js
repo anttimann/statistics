@@ -2,18 +2,6 @@
 
 const _ = require('lodash');
 
-function createSeriesName(types) {
-    types = _.filter(types, (t) => {
-        return !t.time;
-    });
-    return _.map(types, (type) => {
-        if (type.children) {
-            return type.text;
-        }
-        return _.find(type.options, {id: type.chosen}).text;
-    }).join(' : ');
-}
-
 function createSeries(values, title) { 
     let entry = {}; 
     let years = createLabels(values, title);
@@ -77,7 +65,7 @@ function createDataQueryValues(variables) {
             }
         }
     });
-}
+}  
 
 function isYearData(entry) {
     return ['vuosi', 'tilastovuosi', 'time', 'year'].indexOf(entry.code.toLowerCase()) >= 0;
@@ -85,7 +73,6 @@ function isYearData(entry) {
 
 module.exports = {
     createDataQueryValues: createDataQueryValues,
-    createSeriesName: createSeriesName,
     createSeries: createSeries,
     isYearData: isYearData
 };

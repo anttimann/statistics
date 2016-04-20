@@ -7,7 +7,7 @@
   "scripts": {
     "start": "supervisor -i node_modules,.git,app -e html,js server",
     "watch": "watchify app/app.js -d -v -o public/app.js",
-    "build-js": "babel public/app.js -i angular -o public/app.min.js",
+    "build-js": "browserify app/app.js -t babelify | uglifyjs -c > public/app.min.js",
     "build-css": "node-sass --include-path app app/app.scss public/main.css",
     "watch-css": "nodemon -e scss -x \"npm run build-css\"",
     "unittest": "jasmine JASMINE_CONFIG_PATH=jasmine.json"
@@ -16,20 +16,22 @@
   "dependencies": {
     "bluebird": "^3.3.5",
     "boom": "^3.1.2",
+    "chart.js": "^2.0.2",
     "good": "^6.6.0",
     "good-console": "^5.3.1",
     "hapi": "^13.2.2",
     "hapi-swagger": "^5.0.1",
+    "iconv-lite": "^0.4.13",
     "inert": "^3.2.0",
     "jade": "^1.11.0",
     "lodash": "^4.6.1",
     "mongodb": "^2.1.16",
-    "request": "^2.69.0",
+    "request": "^2.72.0",
     "vision": "^4.0.1"
   },
   "devDependencies": {
     "angular": "^1.5.3",
-    "angular-chart.js": "^1.0.0-alpha3",
+    "angular-chart.js": "^1.0.0-alpha4",
     "angular-local-storage": "^0.2.7",
     "angular-mocks": "^1.5.3",
     "angular-resource": "^1.5.3",
@@ -56,8 +58,10 @@
     "node-sass": "^3.4.2",
     "nodemon": "^1.9.1",
     "npm": "^3.8.6",
+    "q": "^1.4.1",
     "requirejs": "^2.2.0",
     "sinon": "^1.17.3",
+    "uglifyify": "^3.0.1",
     "uglifyjs": "^2.4.10",
     "watchify": "^3.7.0"
   }

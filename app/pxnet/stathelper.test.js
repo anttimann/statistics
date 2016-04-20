@@ -4,13 +4,6 @@ const expect = require('chai').expect;
 const helper = require('./stathelper');
 
 describe('stathelper  test', function() {
-    it('Create simple series name', function() {
-        expect(helper.createSeriesName([
-            { text: 'abc', children: [], leaf: true },
-            { options: [{text: 'def', id: 12}], chosen: 12}
-        ])).to.equal('abc : def');
-    });
-
     it('Create query values', function() {
         expect(helper.createDataQueryValues([
             { code: 'abc', chosen: '123', options: ['123', '456']},

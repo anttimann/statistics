@@ -6,11 +6,8 @@ const mongo = require('mongodb');
 function get(request, reply) {
     let db = request.server.app.database;
 
-    if (!db) {
-        return reply(Boom.notFound('Retry later'));
-    }
-
-    console.log(request.params);
+    if (!db) return reply(Boom.notFound('Retry later'));
+    
     db.collection('series').findOneAsync({_id: new mongo.ObjectID(request.params.seriesId)}, {'_id': false})
         .then((d) => {
             reply(JSON.stringify(d));
@@ -23,9 +20,7 @@ function get(request, reply) {
 function store(request, reply) {
     let db = request.server.app.database;
     
-    if (!db) {
-        return reply(Boom.notFound('Retry later'));
-    }
+    if (!db) return reply(Boom.notFound('Retry later'));
     
     let newSeries = request.payload;
     newSeries.insertionDate = new Date();

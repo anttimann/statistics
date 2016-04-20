@@ -14,13 +14,13 @@ angular.module('app.storeseries', [])
                     deferred.resolve(headerFunc().location);
                 });
             return deferred.promise;
-        },
+        },  
         get: (seriesId) => {
             let deferred = $q.defer();
             SeriesAPI.get({seriesId: seriesId}).$promise.then((response) => {
                 deferred.resolve(response.data);
-            });
+            }); 
             return deferred.promise; 
-        }
+        } 
     };
 }]);

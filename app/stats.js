@@ -6,16 +6,22 @@ require('./inputs/select');
 require('./actions/shareseries');
 
 require('./pxnet/pxnet');
+require('./customs/customs');
 
-angular.module('app.stats', ['app.pxnet',  'app.selectinput', 'app.linechart', 'app.removablelist', 'app.datatree', 'app.localstorage', 'app.shareseries'])
+angular.module('app.stats', ['app.pxnet', 'app.customs', 'app.selectinput', 'app.linechart', 'app.removablelist',
+    'app.datatree', 'app.localstorage', 'app.shareseries'])
     
-.controller('StatsCtrl', ['$routeParams', 'pxNetService', 'localStorage',
-    function($routeParams, pxNetService, localStorage) {
+.controller('StatsCtrl', ['$routeParams', 'pxNetService', 'customsService', 'localStorage',
+    function($routeParams, pxNetService, customsService, localStorage) {
     var ctrl = this;
 
     ctrl.dataTree = []; 
  
     pxNetService.getData().then((data) => {
+        ctrl.dataTree = ctrl.dataTree.concat(data);
+    });
+        
+    customsService.getData().then((data) => {
         ctrl.dataTree = ctrl.dataTree.concat(data);
     });
         
@@ -35,12 +41,12 @@ angular.module('app.stats', ['app.pxnet',  'app.selectinput', 'app.linechart', '
     ctrl.series = [];    
     ctrl.addSeries = () => { 
         ctrl.show.tables = false;
-        ctrl.show.menuOpen = false;
+        ctrl.show.menuOpen = false; 
         
         ctrl.tables.getSeriesData().then((seriesData) => {
-            ctrl.series.push(seriesData);
+            if (seriesData) ctrl.series.push(seriesData); 
         }); 
-    };
+    }; 
         
     ctrl.removeSeries = (title) => {
         let seriesData = localStorage.get();
@@ -58,8 +64,14 @@ angular.module('app.stats', ['app.pxnet',  'app.selectinput', 'app.linechart', '
     let seriesData = localStorage.get();
     if (seriesData.length) {
         seriesData.forEach((d) => {
-            pxNetService.getSeriesData(d.path, d.query, d.title).then((seriesData) => {
-                ctrl.series.push(seriesData);
+            let service = d.source === 'pxnet' ? pxNetService : customsService;
+            service.getSeriesData(d.path, d.query, d.title).then((seriesData) => {
+                if (seriesData) {  
+                    ctrl.series.push(seriesData);
+                } 
+                else { 
+                    ctrl.removeSeries(d.title); 
+                }
             });
         }); 
     }

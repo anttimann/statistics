@@ -7,7 +7,8 @@ exports.register = (server, options, next) => {
         { register: require('vision') },
         { register: require('inert') },
         { register: require('hapi-swagger') },
-        { register: require('./server/series') }
+        { register: require('./server/series') },
+        { register: require('./server/customs') }
     ];
     
     server.register(plugins, (err) => {
