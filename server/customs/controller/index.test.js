@@ -21,17 +21,6 @@ describe('customs API', function() {
 
     it('created correct options reply', function() {
         expect(ctrl.createOptionsReply({
-            dimension: [
-                {id: "D1", classification:[
-                    {label:"Tavaraluokitus CN", elim: "N", size: 21133, show: "T"},
-                    {label:"Tavaraluokitus CN8", elim:"N", size: 13848, show: "CT"},
-                    {label:"Tavaraluokitus CN6", elim:"N", size: 5925, show: "CT"}
-                ]}, 
-                {id: "D2", classification: [
-                    {label: "Aika", elim: "N", size: 169, show: "T"}
-                ]}
-            ]
-        }, {
             classification:[
                 {id: "D1", label: "Tavaraluokitus CN2",
                     class: [

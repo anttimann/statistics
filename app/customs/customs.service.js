@@ -21,7 +21,7 @@ function customsService($q, customsAPI, localStorage) {
         value.getChildren = () => {
             return addSubjects(value, value.id, cache);
         };
-        return $q.when([value]);
+        return $q.when([value]);   
     }
 
     function addSubjects(parent, subjectPath, cache) {
@@ -29,20 +29,13 @@ function customsService($q, customsAPI, localStorage) {
         let deferred = $q.defer();
 
         customsAPI('subjects').query({}).$promise.then(function (values) {
-            cache.children = _.map(values, (e) => {  
-                let value = {
-                    path: e.ifile,
-                    id: e.ifile,
-                    text: _.capitalize(e.title),
-                    leaf: true
-                };
-
+            cache.children = _.map(values, (e) => {
                 let cache = {};
-                value.getChildren = () => {
-                    return addTable(value, value.path, cache);
-                };
-  
-                return value;
+                
+                e.path = e.id;
+                e.leaf = true;
+                e.getChildren = () => addTable(e, e.path, cache);
+                return e;  
             });
             deferred.resolve(cache.children);
         });
@@ -52,7 +45,6 @@ function customsService($q, customsAPI, localStorage) {
     function addTable(parent, subjectPath, cache) {  
         if (cache.path == subjectPath) return $q.when(cache);
         cache.path = subjectPath;
-
         let deferred = $q.defer();
 
         customsAPI('options')
@@ -63,9 +55,7 @@ function customsService($q, customsAPI, localStorage) {
                     e.chosen = e.options[0].id;
                 });      
 
-                cache.getSeriesData = () => {
-                    return getSeriesData(cache.options, parent, subjectPath);
-                };
+                cache.getSeriesData = () => getSeriesData(cache.options, parent, subjectPath);
                 deferred.resolve(cache);
             });
         return deferred.promise;
@@ -85,7 +75,7 @@ function customsService($q, customsAPI, localStorage) {
     function getSeriesDataWithQuery(path, query, title) {
         let deferred = $q.defer();
         query.latest = 300;
-        customsAPI('series')   
+        customsAPI('series')     
             .get(query, (values) => {
                 let entry = values;
                 entry.path = path; 

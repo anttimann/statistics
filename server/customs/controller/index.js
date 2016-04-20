@@ -10,63 +10,46 @@ const Boom = require('boom');
 const config = require('../config');
  
 function getSubjects(req, reply) {
-    return request({
-        uri: createUrl(['atype=stats'])
-    }).then((message) => {
-        reply(message.body);
-    });
+    return queryData(['atype=stats'])
+        .then((values) => {
+            reply(
+                _.map(values, (v) => {
+                    return { id: v.ifile, text: _.capitalize(v.title) };
+                })
+            );
+        });
 }
 
 function getOptions(req, reply) {
-    return Promise.all([
-        request({
-            uri: createUrl(['atype=dims', 'ifile=' + req.query.id]),
-            encoding: null
-        }),
-        request({
-            uri: createUrl(['atype=class', 'ifile=' + req.query.id]),
-            encoding: null
-        })
-    ])
+    return queryData(['atype=class', 'ifile=' + req.query.id])
         .then((values) => {
-            let dimsData = iconv.decode(new Buffer(values[0].body), "UTF-8");
-            let classData = iconv.decode(new Buffer(values[1].body), "UTF-8");
-            reply(createOptionsReply(JSON.parse(dimsData), JSON.parse(classData)));
+            reply(createOptionsReply(values));
         });
 }
 
-function createOptionsReply(dimsData, classData) {
-    let reply = _.map(
-        _.filter(classData.classification, (e) => {return e.label !== 'Aika'}),
-        (classEntry) => {
-            let value = {
-                code: classEntry.id,
-                options: [],
-                title: classEntry.label.split(' ')[0],
-                time: false
-            };
-
-            value.options = _.map(classEntry.class, (option) => {
-                return { id: classEntry.label + '=' + option.code, text: option.text };
-            });
-            return value;
-        });
-
-    return reply;
+function createOptionsReply(classData) {
+    return _(classData.classification)
+        .filter((e) => e.label !== 'Aika')
+        .map((e) => {
+                return {
+                    code: e.id,
+                    title: e.label.split(' ')[0],
+                    time: false,
+                    options: _.map(e.class, (option) => {
+                        return { id: e.label + '=' + option.code, text: option.text };
+                    })
+                };
+            }).value();
 }
 
 function getSeries(req, reply) {
-    return request({
-        uri: createUrl(['atype=data', 'ifile=' + req.query.id, 'Aika==FIRST*;' + req.query.latest].concat(req.query.values))
-    }).then((message) => {
-        let seriesData = iconv.decode(new Buffer(message.body), "UTF-8");
-        try {
-            reply(createSeriesReply(JSON.parse(seriesData), 0));
-        } catch (e) {
-            reply(Boom.badRequest('Parameters are missing: ' + e + ' ; ' + seriesData));
-        }
-        
-    });
+    return queryData(['atype=data', 'ifile=' + req.query.id, 'Aika==FIRST*;' + req.query.latest].concat(req.query.values))
+        .then((values) => {
+            reply(createSeriesReply(values, 0));
+        })
+        .catch((e) => {
+            reply(Boom.badRequest('Parameters are missing: ' + e));
+        });
 }
 
 function createSeriesReply(values, timeIndex) {
@@ -80,9 +63,26 @@ function convertDate(date) {
     return date.replace(/([\d]{4})/i, '$1-');
 }
 
+function queryData(values) {
+    return request({
+        uri: createUrl(values)
+    }).then((message) => {
+        try {
+            return _.flow(
+                (e) => new Buffer(e),
+                _.curry(iconv.decode)(_, 'UTF-8', {}),
+                JSON.parse,
+                Promise.resolve
+            )(message.body);
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    });
+}
+
 function createUrl(values) {
     values = _.map(values, (e) => {
-        return e.replace(/\+/g, '%2B');
+        return e.replace(/\+/g, '%2B').replace(/ä/g, '*228;').replace(/ö/g, '*246;').replace(/Ä/g, '*196;').replace(/Ö/g, '*214;');
     });
     return config.apiUrl + '?' + config.defaultParams.concat(values).join('&')
 }

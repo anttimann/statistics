@@ -13,7 +13,7 @@ function get(request, reply) {
             reply(JSON.stringify(d));
         })
         .catch((e) => {
-            return reply(Boom.notFound('Retry later'));
+            reply(Boom.notFound('Retry later'));
         });
 }
 
