@@ -19,9 +19,9 @@ describe('Menubar', function() {
 
     it('should be able to open tree menu and choose options', () => {
         openMenuButton().click();
-        expect(firstDataTreeLevel().count()).to.eventually.equal(9);
+        expect(firstDataTreeLevelAll().count()).to.eventually.equal(9);
         firstDataTreeLevelChild(1).click();
-        expect(secondDataTreeLevel().count()).to.eventually.equal(16);
+        expect(secondDataTreeLevelAll().count()).to.eventually.equal(16);
     });
     
     function openMenuButton() {
@@ -29,14 +29,14 @@ describe('Menubar', function() {
     }
 
     function closeMenuButton() {
-        return element(by.css('.menu > .menu_open'));
+        return element(by.css('.menu > .menu_close'));
     }
 
     function menuArea() {
         return element(by.css('.bottom_area'));
     }
     
-    function firstDataTreeLevel() {
+    function firstDataTreeLevelAll() {
         return element.all(by.css('.datatree > ul > li'));
     }
 
@@ -44,7 +44,7 @@ describe('Menubar', function() {
         return element(by.css('.datatree > ul > li:nth-child(' + childIndex + ')'));
     }
 
-    function secondDataTreeLevel() {
+    function secondDataTreeLevelAll() {
         return element.all(by.css('.datatree > ul > li:first-child > ul > li'));
     }
 });
