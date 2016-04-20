@@ -23,16 +23,16 @@ function createLabels(values, title) {
         return isYearData(e);
     });
 
-    if (yearIndex === -1) {
+    if (yearIndex === -1 || (values.data.length === 1 && isNaN(values.data[0].key[yearIndex]))) {
         let regex = /[\d]{4}(?![\d])/;
         let value = title.match(regex);
         return value ? [value[0]] : ['2002'];
     }
-
+    
     return _.map(values.data, (e) => {
         return e.key[yearIndex]
     });
-}
+}   
 
 function createData(values) {
     return _.map(values.data, (e) => {
