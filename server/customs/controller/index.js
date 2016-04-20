@@ -5,7 +5,7 @@ const request = Promise.promisify(require('request'));
 
 const _ = require('lodash');
 const iconv = require('iconv-lite');
-const Boom = require('Boom');
+const Boom = require('boom');
 
 const config = require('../config');
  
