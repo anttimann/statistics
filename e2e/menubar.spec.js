@@ -3,6 +3,10 @@ chai.use(require("chai-as-promised"));
 const expect = chai.expect;
 
 const config = require('./config');
+const page = require('./page');
+const menubar = page.menubar;
+const chartArea = page.chartArea;
+const shareSeries = page.shareSeries;
 
 describe('Menubar', function() {
     beforeEach(() => {
@@ -11,40 +15,32 @@ describe('Menubar', function() {
     });
     
     it('should be able to open and close menu', () => {
-        openMenuButton().click();
-        expect(menuArea().isDisplayed()).to.eventually.equal(true);
-        closeMenuButton().click();
-        expect(menuArea().isDisplayed()).to.eventually.equal(false);
+        menubar.openMenuButton().click();
+        expect(menubar.menuArea().isDisplayed()).to.eventually.equal(true);
+        menubar.closeMenuButton().click();
+        expect(menubar.menuArea().isDisplayed()).to.eventually.equal(false);
     });
 
-    it('should be able to open tree menu and choose options', () => {
-        openMenuButton().click();
-        expect(firstDataTreeLevelAll().count()).to.eventually.equal(9);
-        firstDataTreeLevelChild(1).click();
-        expect(secondDataTreeLevelAll().count()).to.eventually.equal(16);
+    it('should be able to open tree menu and choose series and remove them', () => {
+        menubar.openMenuButton().click();
+        expect(menubar.dataTreeLevelAll(1).count()).to.eventually.equal(9);
+        
+        menubar.dataTreeEntry(1, 'Tulli').click();
+        expect(menubar.dataTreeLevelAll(2).count()).to.eventually.equal(16);
+        
+        menubar.dataTreeEntry(2, 'Kauppatase').click();
+        expect(menubar.inputArea().isDisplayed()).to.eventually.equal(true);
+        expect(menubar.inputsAll().count()).to.eventually.equal(2);
+        
+        menubar.addSeriesButton().click();
+        expect(menubar.menuArea().isDisplayed()).to.eventually.equal(false);
+        expect(chartArea.addedSeriesAll().count()).to.eventually.equal(1);
+
+        chartArea.shareSeriesButton().click();
+        expect(shareSeries.shareLinkInput().getAttribute('value')).to.eventually.contain('/#/kayrat/');
+        shareSeries.closeButton().click();
+        
+        chartArea.removeSeriesButton(1).click();
+        expect(chartArea.addedSeriesAll().count()).to.eventually.equal(0);
     });
-    
-    function openMenuButton() {
-        return element(by.css('.menu > .menu_open'));
-    }
-
-    function closeMenuButton() {
-        return element(by.css('.menu > .menu_close'));
-    }
-
-    function menuArea() {
-        return element(by.css('.bottom_area'));
-    }
-    
-    function firstDataTreeLevelAll() {
-        return element.all(by.css('.datatree > ul > li'));
-    }
-
-    function firstDataTreeLevelChild(childIndex) {
-        return element(by.css('.datatree > ul > li:nth-child(' + childIndex + ')'));
-    }
-
-    function secondDataTreeLevelAll() {
-        return element.all(by.css('.datatree > ul > li:first-child > ul > li'));
-    }
 });
