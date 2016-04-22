@@ -34,12 +34,12 @@ angular.module('app.linechart', ['chart.js'])
             scope.$watchCollection('series', (newValue, oldValue) => {
                 scope.chart = converter.convertToChartJSData(newValue);
                 scope.yAxes = _.map(_.range(scope.chart.data.length), (i) => 'y-axis-' + (i + 1));
-                scope.options = {
-                    scales: {
-                        xAxes: [{type: 'time', id: 'x-axis-1'}], 
-                        yAxes: _.map(_.range(scope.chart.data.length), (i) => {
-                            return { type:'linear', id: 'y-axis-' + (i + 1)}
-                        })
+                scope.options = { 
+                    scales: {   
+                        xAxes: [{type: 'time', id: 'x-axis-1'}]//, 
+                        //yAxes: _.map(_.range(scope.chart.data.length), (i) => {
+                        //    return { type:'linear', id: 'y-axis-' + (i + 1)}
+                        //})
                     }
                 };
             }); 
