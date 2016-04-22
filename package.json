@@ -10,7 +10,10 @@
     "build-js": "browserify app/app.js -t babelify | uglifyjs -c > public/app.min.js",
     "build-css": "node-sass --include-path app app/app.scss public/main.css",
     "watch-css": "nodemon -e scss -x \"npm run build-css\"",
-    "unittest": "jasmine JASMINE_CONFIG_PATH=jasmine.json"
+    "e2e-tests": "protractor protractor.conf.js",
+    "unittest-fe": "mocha \"app/**/*.test.js\"", 
+    "unittest-be": "mocha \"server/**/*.test.js\"",  
+    "unittest-angular": "karma start"
   },
   "author": "Antti Manninen <antti.mann@gmail.com>",
   "dependencies": {

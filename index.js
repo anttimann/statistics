@@ -8,7 +8,8 @@ exports.register = (server, options, next) => {
         { register: require('inert') },
         { register: require('hapi-swagger') },
         { register: require('./server/series') },
-        { register: require('./server/customs') }
+        { register: require('./server/customs') },
+        { register: require('./server/pxnet') }
     ];
     
     server.register(plugins, (err) => {

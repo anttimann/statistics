@@ -70,12 +70,12 @@ function queryData(values) {
         try {
             return _.flow(
                 (e) => new Buffer(e),
-                _.curry(iconv.decode)(_, 'UTF-8', {}),
+                (e) => iconv.decode(e, 'UTF-8', {}),
                 JSON.parse,
                 Promise.resolve
             )(message.body);
         } catch (e) {
-            return Promise.reject(e);
+            return Promise.reject(message.body);
         }
     });
 }

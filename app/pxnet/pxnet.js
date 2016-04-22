@@ -2,7 +2,6 @@ require('./../services/localstorage');
 
 const _ = require('lodash');
 
-const helper = require('./stathelper');
 const common = require('../common/common');
 
 angular.module('app.pxnet', ['ngResource', 'app.localstorage'])
@@ -17,33 +16,26 @@ angular.module('app.pxnet', ['ngResource', 'app.localstorage'])
     
 .factory('pxNetAPI', ['$resource', function($resource) { 
     return function(path) {
-        return $resource('http://pxnet2.stat.fi/PXWeb/api/v1/fi/' + path);
+        return $resource('/data/pxnet/' + path);
     }; 
 }])
 
 .factory('pxNetService', ['$q', 'pxNetAPI', 'localStorage', function($q, pxNetAPI, localStorage) {
     return {
-        getData: getSources,
+        getData: getSources,  
         getSeriesData: getSeriesDataWithQuery
     };
 
     function getSources() {
-        let deferred = $q.defer();
-        pxNetAPI('').query({}).$promise.then((values) => {
+        let deferred = $q.defer();  
+        pxNetAPI('sources').query({}).$promise.then((values) => {
             let sources = _.map(values, (e) => {
-                let value = {
-                    path: e.dbid,
-                    id: e.dbid,
-                    text: e.text.replace(/_/g, ' ').replace('StatFin', 'Tilastokeskus'),
-                    children: []
-                };
-
                 let cache = {};
-                value.getChildren = () => {
-                    return addSubjects(value, value.id, cache); 
-                };
-                return value;
-            });
+                 
+                e.path = e.id; 
+                e.getChildren = () => addSubjects(e, e.id, cache);
+                return e;
+            });  
             deferred.resolve(sources);
         });
         return deferred.promise;
@@ -53,23 +45,18 @@ angular.module('app.pxnet', ['ngResource', 'app.localstorage'])
         if (cache.children && cache.children.length) return $q.when(cache.children);
         let deferred = $q.defer();
 
-        pxNetAPI(subjectPath).query({}).$promise.then((values) => {
+        pxNetAPI('subjects').query({id: subjectPath}).$promise.then((values) => {
             cache.children = _.map(values, (e) => {
-                let value = {
-                    path: subjectPath + '/' + e.id,
-                    id: e.id,
-                    text: e.text,
-                    children: [],
-                    leaf: e.id.endsWith('.px') ? true: false
-                };
-
                 let cache = {};
-                value.getChildren = () => {
-                    let adder = e.id.endsWith('.px') ? addTable: addSubjects;
-                    return adder(value, value.path, cache);
-                };
 
-                return value; 
+                e.path = subjectPath + '/' + e.id;
+                e.leaf = e.id.endsWith('.px') ? true: false;
+                
+                e.getChildren = () => {
+                    let adder = e.leaf ? addTable: addSubjects;
+                    return adder(e, e.path, cache);  
+                };
+                return e; 
             });
             deferred.resolve(cache.children);
             });
@@ -82,24 +69,12 @@ angular.module('app.pxnet', ['ngResource', 'app.localstorage'])
 
         let deferred = $q.defer();
         
-        pxNetAPI(subjectPath)    
-            .get({}, (values) => {
+        pxNetAPI('options')
+            .query({id: subjectPath}, (values) => {
                 cache.title = parent.text;
-                cache.options = _.map(values.variables, (e) => {
-                    let value = {
-                        title: e.text,
-                        code: e.code,
-                        options: _.zipWith(e.values, e.valueTexts, (id, text) => {
-                            return {
-                                id: id,
-                                text: text
-                            };
-                        }),
-                        time: e.time || helper.isYearData(e)
-                    };
-
-                    value.chosen = value.options[0].id;
-                    return value;
+                cache.options = _.map(values, (e) => {
+                    e.chosen = e.options[0].id;
+                    return e; 
                 });
 
                 cache.getSeriesData = () => { 
@@ -112,22 +87,28 @@ angular.module('app.pxnet', ['ngResource', 'app.localstorage'])
 
     function getSeriesData(tableValues, parentSubject, subjectPath) {
         let title = common.createSeriesName([parentSubject].concat(tableValues));
-        let query = helper.createDataQueryValues(tableValues);
+        let query = createDataQueryValues(tableValues);
 
         localStorage.add({source: 'pxnet', title: title, query: query, path: subjectPath});
         return getSeriesDataWithQuery(subjectPath, query, title);
     }
     
+    function createDataQueryValues(values) {
+        return _.map(values, (v) => {
+            if (v.time) {  
+                return v.code + '=' + _.map(v.options, 'id').join(',');
+            }
+            return v.code + '=' + v.chosen;
+        });
+    }
+    
     function getSeriesDataWithQuery(path, query, title) {
-        let deferred = $q.defer();
-        pxNetAPI(path)
-            .save({
-                query: query,
-                response: {format: 'json'}
-            }, (values) => {
-                let entry = helper.createSeries(values, title);
-                entry.path = path;
-                deferred.resolve(entry);
+        let deferred = $q.defer(); 
+        pxNetAPI('series')
+            .get({ id: path, values: query }, (series) => {
+                series.path = path; 
+                series.title = title;
+                deferred.resolve(series); 
             }, (err) => { 
                 deferred.resolve(null);
             });

@@ -16,8 +16,8 @@ describe('pxNet test', () => {
     
     it('should call for sources data', (done) => {
         inject(function (pxNetService) {
-            $httpBackend.expectGET('http://pxnet2.stat.fi/PXWeb/api/v1/fi')
-                .respond([{dbid: '123', text: 'abc'}]);
+            $httpBackend.expectGET('/data/pxnet/sources')
+                .respond([{id: '123', text: 'abc'}]);
 
             pxNetService.getData().then((data) => {
                 expect(data.length).to.equal(1);
@@ -33,13 +33,13 @@ describe('pxNet test', () => {
 
     it('should call for series data', (done) => {
         inject(function (pxNetService) {
-            $httpBackend.expectPOST('http://pxnet2.stat.fi/PXWeb/api/v1/fi/123/abc')
+            $httpBackend.expectGET('/data/pxnet/series?id=123%2Fabc&values=a%3D1')
                 .respond({
-                    columns: [{code: 'type1', text: 'type1'}],
-                    data: [{key: ['typeValue'], values: ['123']}]
+                    labels: ['2002'],
+                    data: ['123']
                 });
         
-            pxNetService.getSeriesData('123/abc', {}, 'test').then((data) => {
+            pxNetService.getSeriesData('123/abc', 'a=1', 'test').then((data) => {
                 expect(data.path).to.equal('123/abc');
                 expect(data.data).to.deep.equal(['123']);
                 expect(data.labels).to.deep.equal(['2002']);

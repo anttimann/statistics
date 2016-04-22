@@ -14,11 +14,11 @@ angular.module('app.linechart', ['chart.js'])
         chartColors: common.colors,  
         maintainAspectRatio: false, 
         responsive: true,
-        legendTemplate: "<span></span>" 
+        legendTemplate: '<span></span>' 
     });
     
     ChartJsProvider.setOptions('line', {
-        legendTemplate: "<span></span>"
+        legendTemplate: '<span></span>'
     }); 
 }]) 
  
@@ -27,13 +27,21 @@ angular.module('app.linechart', ['chart.js'])
         restrict: 'E', 
         transclude: true,
         scope: {
-            series: '=' 
+            series: '='   
         },       
         templateUrl: 'app/displays/linechart.html', 
-        link: (scope) => {
-            scope.options ={scales: {xAxes: [{type: "time", id: "x-axis-1"}]}};
+        link: (scope) => { 
             scope.$watchCollection('series', (newValue, oldValue) => {
                 scope.chart = converter.convertToChartJSData(newValue);
+                scope.yAxes = _.map(_.range(scope.chart.data.length), (i) => 'y-axis-' + (i + 1));
+                scope.options = {
+                    scales: {
+                        xAxes: [{type: 'time', id: 'x-axis-1'}], 
+                        yAxes: _.map(_.range(scope.chart.data.length), (i) => {
+                            return { type:'linear', id: 'y-axis-' + (i + 1)}
+                        })
+                    }
+                };
             }); 
         
             
