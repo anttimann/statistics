@@ -15,8 +15,8 @@ function customsService($q, customsAPI, localStorage) {
             path: 'tulli',
             id: 'tulli',
             text: 'Tulli'
-        };
-
+        }; 
+    
         let cache = {};
         value.getChildren = () => {
             return addSubjects(value, value.id, cache);
@@ -45,27 +45,55 @@ function customsService($q, customsAPI, localStorage) {
     function addTable(parent, subjectPath, cache) {  
         if (cache.path == subjectPath) return $q.when(cache);
         cache.path = subjectPath;
-        let deferred = $q.defer();
+        let deferred = $q.defer();  
 
         customsAPI('options')
             .query({id: parent.id}, (values) => {
-                cache.title = parent.text;
-                cache.options = values;
-                cache.options.forEach((e) => {
-                    e.chosen = e.options[0].id;
-                });      
+                cache.title = parent.text;  
+                 
+                cache.options = _.map(values, (e) => {
+                    let entry = {
+                        title: e.title,
+                        code: e.code,
+                        time: e.time,
+                        selects: _.map(e.options, (o) => {
+                            return {
+                                options: o,
+                                chosen: o[0].id
+                            };
+                        }) 
+                    };  
 
+                    entry.updateSelects = (index) => {
+                        if (entry.selects.length > 1 && index < entry.selects.length - 1) {
+                            getTableDataWithDims(parent.id, entry.selects[0].chosen)
+                                .then((values) => {
+                                    entry.selects[1] = {
+                                        options: values[0].options[0],
+                                        chosen: values[0].options[0][0].id 
+                                    };  
+                                });
+                        } 
+                    };
+
+                    return entry;
+                });
                 cache.getSeriesData = () => getSeriesData(cache.options, parent, subjectPath);
                 deferred.resolve(cache);
             });
-        return deferred.promise;
+        return deferred.promise;  
     }
-
+    
+    function getTableDataWithDims(id, dims) { 
+        return customsAPI('options') 
+            .query({id: id, optionClass: dims}).$promise;
+    }
+    
     function getSeriesData(tableValues, parentSubject, subjectPath) {
         let title = common.createSeriesName([parentSubject].concat(tableValues));
         let query = {
             id: parentSubject.id,   
-            values: _.map(tableValues, 'chosen')
+            values: _.map(tableValues, (e) => e.selects[e.selects.length - 1].chosen)
         };
 
         localStorage.add({source: 'customs', title: title, query: query, path: subjectPath});

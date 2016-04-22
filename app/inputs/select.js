@@ -8,8 +8,9 @@ angular.module('app.selectinput', [])
             title: '@',
             name: '@', 
             model: '=',
-            options: '='
-        },
+            selects: '=',
+            change: '=' 
+        },   
         templateUrl: 'app/inputs/select',
         link: (scope) => {
             scope.id = scope.name.replace(' ', ''); 

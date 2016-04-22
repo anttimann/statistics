@@ -5,14 +5,6 @@ const _ = require('lodash');
 const common = require('../common/common');
 
 angular.module('app.pxnet', ['ngResource', 'app.localstorage'])
- 
-.config(['$httpProvider', function ($httpProvider) {
-    //Reset headers to avoid OPTIONS request (aka preflight) 
-    $httpProvider.defaults.headers.common = {};
-    $httpProvider.defaults.headers.post = {};
-    $httpProvider.defaults.headers.put = {};
-    $httpProvider.defaults.headers.patch = {};
-}]) 
     
 .factory('pxNetAPI', ['$resource', function($resource) { 
     return function(path) {

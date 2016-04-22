@@ -14,7 +14,7 @@ div.menubar(ng-class="{tables_visible: stats.show.tables, menu_open: stats.show.
         div.series.tables(ng-if="stats.show.tables")
             div.title {{stats.tables.title}}
             div.series_input(ng-repeat="entry in stats.tables.options | filter: {time: 'false'}")
-                sv-select-input(title="{{entry.title}}", options="entry.options", name="{{entry.title}}", model="entry.chosen")
+                sv-select-input(title="{{entry.title}}", selects="entry.selects", name="{{entry.title}}", change="entry.updateSelects")
             div.series_input
                 button.btn.btn-default.hide_view(ng-click="stats.show.tables = false") Piilota
                 button.btn.btn-success.add_series(ng-click="stats.addSeries()") Lisää sarja kuvaan

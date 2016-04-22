@@ -20,6 +20,7 @@ module.exports = [
             description: 'Get options of a data type',
             validate: {
                 query: {
+                    optionClass: Joi.string().optional(),
                     id: Joi.string().required()
                 }
             }

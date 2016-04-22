@@ -21,13 +21,67 @@ function getSubjects(req, reply) {
 }
 
 function getOptions(req, reply) {
-    return queryData(['atype=class', 'ifile=' + req.query.id])
-        .then((values) => {
-            reply(createOptionsReply(values));
+    if (req.query.optionClass) {
+        return queryData(['atype=class', 'ifile=' + req.query.id, 'class=' + req.query.optionClass])
+            .then((values) => {
+                reply(createOptionsReply(
+                    [{options: []}],
+                    createOptionsClassReply(values)
+                ));
+            });
+    }
+    else {
+        return Promise.all([
+            queryData(['atype=dims', 'ifile=' + req.query.id]),
+            queryData(['atype=class', 'ifile=' + req.query.id])
+        ]).then((values) => {
+            reply(createOptionsReply(
+                createOptionsDimsReply(values[0]),
+                createOptionsClassReply(values[1]))
+            );
+        });
+    }
+}
+
+function createOptionsReply(dimsData, classData) {
+    return _.map(classData, (c) => {
+        let d = _.find(dimsData, {code: c.code});
+        let options = d && d.options.length > 1 ? [d.options, c.options] : [c.options];
+        return {
+            title: c.title,
+            code: c.code,
+            time: false,
+            options: options
+        }
+    });
+        
+        _.zipWith(dimsData, classData, (d, c) => {
+            let options = d.options.length > 1 ? [d.options, c.options] : [c.options];
+            return {
+                title: c.title,
+                code: c.code,
+                time: false,
+                options: options
+            }
         });
 }
 
-function createOptionsReply(classData) {
+function createOptionsDimsReply(classData) {
+    return _(classData.dimension)
+        .filter((e) => e.classification[0].label !== 'Aika')
+        .filter((e) => e.classification[0].size < 1000)
+        .map((e) => {
+            return {
+                code: e.id,
+                time: false,
+                options: _.map(e.classification, (option) => {
+                    return { id: option.label, text: option.label };
+                })
+            };
+        }).value();
+}
+
+function createOptionsClassReply(classData) {
     return _(classData.classification)
         .filter((e) => e.label !== 'Aika')
         .map((e) => {
@@ -91,6 +145,8 @@ module.exports = {
     getSubjects: getSubjects,
     getOptions: getOptions,
     createOptionsReply: createOptionsReply,
+    createOptionsClassReply: createOptionsClassReply,
+    createOptionsDimsReply: createOptionsDimsReply,
     getSeries: getSeries,
     createSeriesReply: createSeriesReply
 };
