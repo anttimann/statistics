@@ -65,7 +65,7 @@ function customsService($q, customsAPI, localStorage) {
                     };  
 
                     entry.updateSelects = (index) => {
-                        if (dataUpdateNeeded(entry)) {
+                        if (dataUpdateNeeded(entry, index)) {
                             getTableDataWithDims(parent.id, entry.selects[0].chosen)
                                 .then((values) => {
                                     entry.selects[1] = {
@@ -76,7 +76,7 @@ function customsService($q, customsAPI, localStorage) {
                         } 
                     };
 
-                    function dataUpdateNeeded() {
+                    function dataUpdateNeeded(entry, index) {
                         return entry.selects.length > 1 && index < entry.selects.length - 1;
                     }
                     
