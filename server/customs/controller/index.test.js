@@ -27,10 +27,10 @@ describe('customs API', function() {
                 
             }, {
                 code: 'D1', time: false,
-                options: [{id: 'Tavaraluokitus SITC', text: 'Tavaraluokitus SITC'}, {id: 'Tavaraluokitus SITC5', text: 'Tavaraluokitus SITC5'}]
+                options: [{id: 'Tavaraluokitus SITC', text: 'Tavaraluokitus SITC'}, {id: 'Tavaraluokitus CN2', text: 'Tavaraluokitus CN2'}]
             }],
             [{
-                title: 'Tavaraluokitus', code: 'D1', time: false,
+                title: 'Tavaraluokitus CN2', code: 'D1', time: false,
                 options: [{id: 'Tavaraluokitus CN2=00 - 99', text: '(2002--.) KAIKKI RYHMÄT'}, {id: 'Tavaraluokitus CN2=01', text: '(2002--.) ELÄVÄT ELÄIMET'}]
             }, {
                 title: 'Indikaattorit', code: 'V5', time: false,
@@ -38,13 +38,13 @@ describe('customs API', function() {
             }]
         )).to.deep.equal([
             {
-                title: 'Tavaraluokitus', code: 'D1', time: false,
+                code: 'D1', time: false,
                 options: [
-                    [{id: 'Tavaraluokitus SITC', text: 'Tavaraluokitus SITC'}, {id: 'Tavaraluokitus SITC5', text: 'Tavaraluokitus SITC5'}],
+                    [{id: 'Tavaraluokitus CN2', text: 'Tavaraluokitus CN2'}, {id: 'Tavaraluokitus SITC', text: 'Tavaraluokitus SITC'}],
                     [{id: 'Tavaraluokitus CN2=00 - 99', text: '(2002--.) KAIKKI RYHMÄT'}, {id: 'Tavaraluokitus CN2=01', text: '(2002--.) ELÄVÄT ELÄIMET'}]
                 ]
             }, {
-                title: 'Indikaattorit', code: 'V5', time: false,
+                code: 'V5', time: false,
                 options: [
                     [{id: 'Indikaattorit=V1', text: 'Tilastoarvo (euro)'}, {id: 'Indikaattorit=V2', text: 'Muutos%'}]
                 ]
@@ -65,7 +65,7 @@ describe('customs API', function() {
                 }
             ]}
         )).to.deep.equal([
-            {title: 'Tavaraluokitus', code: 'D1', time: false, options: [
+            {title: 'Tavaraluokitus CN2', code: 'D1', time: false, options: [
                 {id: 'Tavaraluokitus CN2=00 - 99', text: '(2002--.) KAIKKI RYHMÄT'}, {id: 'Tavaraluokitus CN2=01', text: '(2002--.) ELÄVÄT ELÄIMET'}, {id: 'Tavaraluokitus CN2=99', text: '(2002--.) Erittelemättömät'}, {id: 'Tavaraluokitus CN2=XX', text: '(2002--.) 87 JA 93 RYHMÄ YHDESSÄ'}
             ]}
         ]);

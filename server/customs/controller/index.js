@@ -44,26 +44,26 @@ function getOptions(req, reply) {
 }
 
 function createOptionsReply(dimsData, classData) {
-    return _.map(classData, (c) => {
+    return _.map(classData, (c, index) => {
         let d = _.find(dimsData, {code: c.code});
+        
+        if (d) {
+            moveChosenOptionToFirst(d, c.title);
+        }
         let options = d && d.options.length > 1 ? [d.options, c.options] : [c.options];
         return {
-            title: c.title,
             code: c.code,
             time: false,
             options: options
         }
     });
-        
-        _.zipWith(dimsData, classData, (d, c) => {
-            let options = d.options.length > 1 ? [d.options, c.options] : [c.options];
-            return {
-                title: c.title,
-                code: c.code,
-                time: false,
-                options: options
-            }
-        });
+}
+
+function moveChosenOptionToFirst(d, id) {
+    let chosenOptionIndex = _.findIndex(d.options, {id: id});
+    if (chosenOptionIndex >= 0) {
+        d.options.splice(0, 0, d.options.splice(chosenOptionIndex, 1)[0]);
+    }
 }
 
 function createOptionsDimsReply(classData) {
@@ -87,7 +87,7 @@ function createOptionsClassReply(classData) {
         .map((e) => {
                 return {
                     code: e.id,
-                    title: e.label.split(' ')[0],
+                    title: e.label,
                     time: false,
                     options: _.map(e.class, (option) => {
                         return { id: e.label + '=' + option.code, text: option.text };

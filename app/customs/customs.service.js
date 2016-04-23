@@ -53,7 +53,7 @@ function customsService($q, customsAPI, localStorage) {
                  
                 cache.options = _.map(values, (e) => {
                     let entry = {
-                        title: e.title,
+                        title: e.options.length > 1 ? 'Arvo' : e.options[e.options.length - 1][0].id.split('=')[0], 
                         code: e.code,
                         time: e.time,
                         selects: _.map(e.options, (o) => {
@@ -65,7 +65,7 @@ function customsService($q, customsAPI, localStorage) {
                     };  
 
                     entry.updateSelects = (index) => {
-                        if (entry.selects.length > 1 && index < entry.selects.length - 1) {
+                        if (dataUpdateNeeded(entry)) {
                             getTableDataWithDims(parent.id, entry.selects[0].chosen)
                                 .then((values) => {
                                     entry.selects[1] = {
@@ -76,6 +76,10 @@ function customsService($q, customsAPI, localStorage) {
                         } 
                     };
 
+                    function dataUpdateNeeded() {
+                        return entry.selects.length > 1 && index < entry.selects.length - 1;
+                    }
+                    
                     return entry;
                 });
                 cache.getSeriesData = () => getSeriesData(cache.options, parent, subjectPath);

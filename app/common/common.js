@@ -6,12 +6,12 @@ function createSeriesName(types) {
     types = _.filter(types, (t) => {
         return !t.time;
     });
-    return _.map(types, (type) => { 
-        if (!type.selects) {
+    return _.map(types, (type) => {
+        if (!type.selects) { 
             return type.text;  
         } 
-        let lastSelect = type.selects[type.selects.length - 1];
-        return _.find(lastSelect.options, {id: lastSelect.chosen}).text;
+
+        return _.map(type.selects, (s) => _.find(s.options, {id: s.chosen}).text).join(' = ');  
     }).join(' : ');
 }
 

@@ -58,15 +58,19 @@ angular.module('app.pxnet', ['ngResource', 'app.localstorage'])
     function addTable(parent, subjectPath, cache) {        
         if (cache.path == subjectPath) return $q.when(cache);
         cache.path = subjectPath; 
-
+ 
         let deferred = $q.defer();
         
         pxNetAPI('options')
-            .query({id: subjectPath}, (values) => {
+            .query({id: subjectPath}, (values) => {  
                 cache.title = parent.text;
                 cache.options = _.map(values, (e) => {
-                    e.chosen = e.options[0].id;
-                    return e; 
+                    return {
+                        title: e.title, 
+                        code: e.code,
+                        time: e.time,
+                        selects: [{ options: e.options, chosen: e.options[0].id }]
+                    };
                 });
 
                 cache.getSeriesData = () => { 
@@ -87,10 +91,10 @@ angular.module('app.pxnet', ['ngResource', 'app.localstorage'])
     
     function createDataQueryValues(values) {
         return _.map(values, (v) => {
-            if (v.time) {  
-                return v.code + '=' + _.map(v.options, 'id').join(',');
+            if (v.time) {   
+                return v.code + '=' + _.map(v.selects[0].options, 'id').join(',');
             }
-            return v.code + '=' + v.chosen;
+            return v.code + '=' + v.selects[0].chosen;
         });
     }
     

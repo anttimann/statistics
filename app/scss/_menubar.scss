@@ -93,7 +93,9 @@ $menu_z_index: 10;
     }
     
     .series_input {
-      margin-bottom: 10px;
+      select {
+        margin-bottom: 10px;
+      }
 
       button {
         float: right;

@@ -2203,15 +2203,15 @@ body > div {
     @media only screen and (max-width: 1199px) {
       .menubar .series.subjects.tables_visible {
         display: none; } }
-    .menubar .series .series_input {
+    .menubar .series .series_input select {
       margin-bottom: 10px; }
-      .menubar .series .series_input button {
-        float: right;
-        font-size: 17px; }
-        .menubar .series .series_input button .add_series {
-          background: #169c45; }
-        .menubar .series .series_input button.hide_view {
-          float: left; }
+    .menubar .series .series_input button {
+      float: right;
+      font-size: 17px; }
+      .menubar .series .series_input button .add_series {
+        background: #169c45; }
+      .menubar .series .series_input button.hide_view {
+        float: left; }
     .menubar .series .datatree .entry {
       cursor: pointer;
       padding-bottom: 10px; }
